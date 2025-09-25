@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Chatbot Configuration Form View -->
+    <record id="view_chatbot_config_form" model="ir.ui.view">
+        <field name="name">chatbot.config.form</field>
+        <field name="model">chatbot.config</field>
+        <field name="arch" type="xml">
+            <form string="Chatbot Configuration">
+                <header>
+                    <button name="test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Configuration Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="API Configuration">
+                            <field name="api_key" password="True"/>
+                            <field name="model_name"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Generation Settings">
+                            <field name="max_tokens"/>
+                            <field name="temperature"/>
+                        </group>
+                    </group>
+                    
+                    <group string="System Prompt">
+                        <field name="system_prompt" nolabel="1"/>
+                    </group>
+                    
+                    <group>
+                        <group string="Usage Statistics">
+                            <field name="total_tokens_used" readonly="1"/>
+                            <field name="total_requests" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Chatbot Configuration List View -->
+    <record id="view_chatbot_config_list" model="ir.ui.view">
+        <field name="name">chatbot.config.list</field>
+        <field name="model">chatbot.config</field>
+        <field name="arch" type="xml">
+            <list string="Chatbot Configurations">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="active"/>
+                <field name="total_tokens_used"/>
+                <field name="total_requests"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Chatbot Configuration Action -->
+    <record id="action_chatbot_config" model="ir.actions.act_window">
+        <field name="name">Chatbot Configuration</field>
+        <field name="res_model">chatbot.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your Gemini AI Chatbot
+            </p>
+            <p>
+                Set up your Google Gemini API key and model preferences.
+            </p>
+        </field>
+    </record>
+</odoo>

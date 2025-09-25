@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Chatbot Configuration -->
+        <record id="default_chatbot_config" model="chatbot.config">
+            <field name="name">Default Gemini Configuration</field>
+            <field name="api_key">AIzaSyCJ9iSf09mzRYp1aBCf80GevebsO1nSvFE</field>
+            <field name="model_name">gemini-1.5-flash</field>
+            <field name="max_tokens">1000</field>
+            <field name="temperature">0.7</field>
+            <field name="system_prompt">You are a helpful AI assistant powered by Google Gemini. You
+                are knowledgeable, friendly, and always try to provide accurate and helpful
+                responses. You can help with a wide variety of topics including answering questions,
+                providing explanations, helping with tasks, and having conversations.</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+  web:
+    image: odoo:18.0
+    container_name: odoo18_web
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./custom_addons:/mnt/extra-addons
+      - ./odoo.conf:/etc/odoo/odoo.conf
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+    command: --config=/etc/odoo/odoo.conf -i base -d odoo_test
+
+  db:
+    image: postgres:16
+    container_name: odoo18_db
+    environment:
+      - POSTGRES_DB=odoo_test
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:

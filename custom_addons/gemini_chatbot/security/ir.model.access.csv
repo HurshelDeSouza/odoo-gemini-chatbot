@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_chatbot_config_user,chatbot.config.user,model_chatbot_config,base.group_user,1,1,1,1
+access_chat_session_user,chat.session.user,model_chat_session,base.group_user,1,1,1,1
+access_chat_message_user,chat.message.user,model_chat_message,base.group_user,1,1,1,1
+access_chatbot_config_public,chatbot.config.public,model_chatbot_config,base.group_public,1,0,0,0
+access_chat_session_public,chat.session.public,model_chat_session,base.group_public,1,1,1,0
+access_chat_message_public,chat.message.public,model_chat_message,base.group_public,1,1,1,0

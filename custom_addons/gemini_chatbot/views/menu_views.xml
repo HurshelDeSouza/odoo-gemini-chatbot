@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_gemini_chatbot_root" 
+              name="Gemini Chatbot" 
+              sequence="10"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_chatbot_config" 
+              name="Configuration" 
+              parent="menu_gemini_chatbot_root" 
+              action="action_chatbot_config" 
+              sequence="10"/>
+
+    <!-- Chat Sessions Menu -->
+    <menuitem id="menu_chat_sessions" 
+              name="Chat Sessions" 
+              parent="menu_gemini_chatbot_root" 
+              action="action_chat_session" 
+              sequence="20"/>
+
+    <!-- Chat Messages Menu -->
+    <menuitem id="menu_chat_messages" 
+              name="Messages" 
+              parent="menu_gemini_chatbot_root" 
+              action="action_chat_message" 
+              sequence="30"/>
+
+    <!-- Chatbot Landing Page Menu -->
+    <record id="action_chatbot_landing" model="ir.actions.act_url">
+        <field name="name">Open Chatbot</field>
+        <field name="url">/chatbot</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_chatbot_landing" 
+              name="Open Chatbot" 
+              parent="menu_gemini_chatbot_root" 
+              action="action_chatbot_landing" 
+              sequence="5"/>
+</odoo>

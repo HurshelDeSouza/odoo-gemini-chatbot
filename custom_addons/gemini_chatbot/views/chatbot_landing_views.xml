@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Chatbot Landing Page Template -->
+    <template id="chatbot_landing_template" name="Gemini AI Chatbot">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>Gemini AI Chatbot</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css"/>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+                <link rel="stylesheet" href="/gemini_chatbot/static/src/css/chatbot_frontend.css"/>
+            </head>
+            <body>
+                <div class="container-fluid chatbot-container">
+                    <div class="row h-100">
+                        <!-- Sidebar -->
+                        <div class="col-md-3 chatbot-sidebar">
+                            <div class="sidebar-header">
+                                <h4><i class="fa fa-robot"></i> Gemini AI Chat</h4>
+                                <button class="btn btn-primary btn-sm" id="new-chat-btn">
+                                    <i class="fa fa-plus"></i> New Chat
+                                </button>
+                            </div>
+                            
+                            <div class="chat-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Session:</span>
+                                    <span class="stat-value" id="session-id">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Tokens Used:</span>
+                                    <span class="stat-value" id="tokens-used">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Messages:</span>
+                                    <span class="stat-value" id="message-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Area -->
+                        <div class="col-md-9 chatbot-main">
+                            <div class="chat-header">
+                                <h5><i class="fa fa-comments"></i> Chat with Gemini AI</h5>
+                                <div class="model-info">
+                                    <small class="text-muted">Powered by Google Gemini</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Chat Messages -->
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="welcome-message">
+                                    <div class="bot-message">
+                                        <div class="message-avatar">
+                                            <i class="fa fa-robot"></i>
+                                        </div>
+                                        <div class="message-content">
+                                            <p>Hello! I'm your Gemini AI assistant. How can I help you today?</p>
+                                            <small class="message-time">Just now</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Chat Input -->
+                            <div class="chat-input-container">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="message-input" 
+                                           placeholder="Type your message here..." maxlength="2000"/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button" id="send-btn">
+                                            <i class="fa fa-paper-plane"></i> Send
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="input-info">
+                                    <small class="text-muted">
+                                        Press Enter to send • <span id="char-count">0</span>/2000 characters
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+                <script><![CDATA[
+                    let currentSessionId = null;
+                    let messageCount = 0;
+                    let totalTokens = 0;
+                    let isTyping = false;
+
+                    $(document).ready(function() {
+                        initializeChatbot();
+                        bindEvents();
+                    });
+
+                    function initializeChatbot() {
+                        createNewSession();
+                        $('#message-input').focus();
+                    }
+
+                    function bindEvents() {
+                        $('#send-btn').click(sendMessage);
+                        
+                        $('#message-input').keypress(function(e) {
+                            if (e.which === 13 && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+
+                        $('#message-input').on('input', function() {
+                            const count = $(this).val().length;
+                            $('#char-count').text(count);
+                        });
+
+                        $('#new-chat-btn').click(createNewSession);
+                    }
+
+                    function createNewSession() {
+                        $.ajax({
+                            url: '/chatbot/new_session',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({params: {}}),
+                            success: function(response) {
+                                console.log('Session response:', response);
+                                // Handle JSON-RPC response format
+                                const data = response.result || response;
+                                if (data.success) {
+                                    currentSessionId = data.session_id;
+                                    updateSessionInfo();
+                                    clearChat();
+                                    showWelcomeMessage();
+                                    console.log('Session created:', currentSessionId);
+                                } else {
+                                    console.error('Failed to create session:', data.error);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Failed to create new session:', error);
+                            }
+                        });
+                    }
+
+                    function sendMessage() {
+                        const message = $('#message-input').val().trim();
+                        
+                        if (!message || isTyping) {
+                            return;
+                        }
+
+                        if (!currentSessionId) {
+                            alert('No active session. Please refresh the page.');
+                            return;
+                        }
+
+                        $('#message-input').val('');
+                        setSendButtonState(false);
+                        isTyping = true;
+
+                        addMessageToChat('user', message);
+                        showTypingIndicator();
+
+                        $.ajax({
+                            url: '/chatbot/send_message',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                params: {
+                                    message: message,
+                                    session_id: currentSessionId
+                                }
+                            }),
+                            success: function(response) {
+                                hideTypingIndicator();
+                                console.log('Message response:', response);
+                                
+                                // Handle JSON-RPC response format
+                                const data = response.result || response;
+                                if (data.success) {
+                                    addMessageToChat('bot', data.bot_response);
+                                    totalTokens += data.tokens_used || 0;
+                                    updateStats();
+                                } else {
+                                    addMessageToChat('bot', 'Sorry, I encountered an error: ' + data.error, true);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                hideTypingIndicator();
+                                console.error('Send message error:', error);
+                                addMessageToChat('bot', 'Sorry, there was a connection error. Please try again.', true);
+                            },
+                            complete: function() {
+                                setSendButtonState(true);
+                                isTyping = false;
+                                $('#message-input').focus();
+                            }
+                        });
+                    }
+
+                    function addMessageToChat(type, content, isError) {
+                        const now = new Date();
+                        const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        let avatarIcon = type === 'user' ? 'fa-user' : 'fa-robot';
+                        let errorClass = isError ? 'error-message' : '';
+                        
+                        const messageDiv = $('<div>').addClass(type + '-message');
+                        const avatarDiv = $('<div>').addClass('message-avatar').html('<i class="fa ' + avatarIcon + '"></i>');
+                        const contentDiv = $('<div>').addClass('message-content ' + errorClass);
+                        const textP = $('<p>').text(content);
+                        const timeSmall = $('<small>').addClass('message-time').text(timeStr);
+                        
+                        contentDiv.append(textP).append(timeSmall);
+                        messageDiv.append(avatarDiv).append(contentDiv);
+
+                        if (type === 'user') {
+                            $('.welcome-message').remove();
+                        }
+
+                        $('#chat-messages').append(messageDiv);
+                        scrollToBottom();
+                        
+                        if (type === 'user') {
+                            messageCount++;
+                            updateStats();
+                        }
+                    }
+
+                    function showTypingIndicator() {
+                        const typingDiv = $('<div>').addClass('bot-message typing-indicator').attr('id', 'typing-indicator');
+                        const avatarDiv = $('<div>').addClass('message-avatar').html('<i class="fa fa-robot"></i>');
+                        const dotsDiv = $('<div>').addClass('typing-dots');
+                        
+                        for(let i = 0; i < 3; i++) {
+                            dotsDiv.append($('<div>').addClass('typing-dot'));
+                        }
+                        
+                        typingDiv.append(avatarDiv).append(dotsDiv);
+                        $('#chat-messages').append(typingDiv);
+                        scrollToBottom();
+                    }
+
+                    function hideTypingIndicator() {
+                        $('#typing-indicator').remove();
+                    }
+
+                    function showWelcomeMessage() {
+                        const welcomeDiv = $('<div>').addClass('welcome-message');
+                        const botDiv = $('<div>').addClass('bot-message');
+                        const avatarDiv = $('<div>').addClass('message-avatar').html('<i class="fa fa-robot"></i>');
+                        const contentDiv = $('<div>').addClass('message-content');
+                        const textP = $('<p>').text("Hello! I'm your Gemini AI assistant. How can I help you today?");
+                        const timeSmall = $('<small>').addClass('message-time').text('Just now');
+                        
+                        contentDiv.append(textP).append(timeSmall);
+                        botDiv.append(avatarDiv).append(contentDiv);
+                        welcomeDiv.append(botDiv);
+                        
+                        $('#chat-messages').append(welcomeDiv);
+                        scrollToBottom();
+                    }
+
+                    function clearChat() {
+                        $('#chat-messages').empty();
+                        messageCount = 0;
+                        totalTokens = 0;
+                        updateStats();
+                    }
+
+                    function updateSessionInfo() {
+                        $('#session-id').text(currentSessionId || '-');
+                    }
+
+                    function updateStats() {
+                        $('#tokens-used').text(totalTokens);
+                        $('#message-count').text(messageCount);
+                    }
+
+                    function setSendButtonState(enabled) {
+                        if (enabled) {
+                            $('#send-btn').prop('disabled', false).html('<i class="fa fa-paper-plane"></i> Send');
+                        } else {
+                            $('#send-btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Sending...');
+                        }
+                    }
+
+                    function scrollToBottom() {
+                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                    }
+                ]]></script>
+            </body>
+        </html>
+    </template>
+</odoo>
