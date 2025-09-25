@@ -60,15 +60,18 @@
 
     <!-- Chatbot Configuration Action -->
     <record id="action_chatbot_config" model="ir.actions.act_window">
-        <field name="name">Chatbot Configuration</field>
+        <field name="name">Configuración Gemini Chatbot</field>
         <field name="res_model">chatbot.config</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="res_id" ref="default_chatbot_config"/>
+        <field name="context">{'create': False, 'edit': True}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Configure your Gemini AI Chatbot
+                Configura tu Gemini AI Chatbot
             </p>
             <p>
-                Set up your Google Gemini API key and model preferences.
+                Establece tu API key de Google Gemini y las preferencias del modelo.
             </p>
         </field>
     </record>
