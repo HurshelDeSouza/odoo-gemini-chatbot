@@ -1,84 +1,313 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Chatbot Landing Page Template -->
-    <template id="chatbot_landing_template" name="Gemini AI Chatbot">
+    <template id="chatbot_landing_template" name="Gemini AI Chatbot Landing">
         <html>
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <title>Gemini AI Chatbot</title>
+                <title>Gemini AI Chatbot - Landing Page</title>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css"/>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
                 <link rel="stylesheet" href="/gemini_chatbot/static/src/css/chatbot_frontend.css"/>
+                <style>
+                    /* Landing Page Styles */
+                    .landing-container {
+                        min-height: 100vh;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        padding: 50px 0;
+                    }
+                    
+                    .landing-content {
+                        text-align: center;
+                        color: white;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 0 20px;
+                    }
+                    
+                    .landing-title {
+                        font-size: 3.5rem;
+                        font-weight: 700;
+                        margin-bottom: 20px;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                    }
+                    
+                    .landing-subtitle {
+                        font-size: 1.3rem;
+                        margin-bottom: 40px;
+                        opacity: 0.9;
+                    }
+                    
+                    .features-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 30px;
+                        margin: 60px 0;
+                    }
+                    
+                    .feature-card {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        border-radius: 15px;
+                        padding: 30px;
+                        text-align: center;
+                        transition: transform 0.3s ease;
+                    }
+                    
+                    .feature-card:hover {
+                        transform: translateY(-5px);
+                    }
+                    
+                    .feature-icon {
+                        font-size: 3rem;
+                        margin-bottom: 20px;
+                        color: #fff;
+                    }
+                    
+                    .feature-title {
+                        font-size: 1.2rem;
+                        font-weight: 600;
+                        margin-bottom: 15px;
+                    }
+                    
+                    .feature-description {
+                        opacity: 0.9;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Floating Chatbot Widget */
+                    .chatbot-widget {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        z-index: 1000;
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .chatbot-toggle {
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 50%;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .chatbot-toggle:hover {
+                        background: #5a6fd8;
+                        transform: scale(1.1);
+                    }
+                    
+                    .chatbot-window {
+                        position: absolute;
+                        bottom: 80px;
+                        right: 0;
+                        width: 350px;
+                        height: 500px;
+                        background: white;
+                        border-radius: 15px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                        display: none;
+                        flex-direction: column;
+                        overflow: hidden;
+                    }
+                    
+                    .chatbot-window.active {
+                        display: flex;
+                        animation: slideUp 0.3s ease;
+                    }
+                    
+                    .widget-header {
+                        background: #667eea;
+                        color: white;
+                        padding: 15px 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    
+                    .widget-title {
+                        font-weight: 600;
+                        margin: 0;
+                    }
+                    
+                    .widget-close {
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 24px;
+                        height: 24px;
+                    }
+                    
+                    .widget-messages {
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 15px;
+                        background: #f8f9fa;
+                    }
+                    
+                    .widget-input-container {
+                        padding: 15px;
+                        border-top: 1px solid #e0e0e0;
+                        background: white;
+                    }
+                    
+                    .widget-input-group {
+                        display: flex;
+                        gap: 10px;
+                    }
+                    
+                    .widget-input {
+                        flex: 1;
+                        border: 1px solid #ddd;
+                        border-radius: 20px;
+                        padding: 8px 15px;
+                        font-size: 14px;
+                        outline: none;
+                    }
+                    
+                    .widget-send-btn {
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 36px;
+                        height: 36px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    
+                    @keyframes slideUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .chatbot-window {
+                            width: 300px;
+                            height: 400px;
+                        }
+                        
+                        .landing-title {
+                            font-size: 2.5rem;
+                        }
+                        
+                        .features-grid {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+                </style>
             </head>
             <body>
-                <div class="container-fluid chatbot-container">
-                    <div class="row h-100">
-                        <!-- Sidebar -->
-                        <div class="col-md-3 chatbot-sidebar">
-                            <div class="sidebar-header">
-                                <h4><i class="fa fa-robot"></i> Gemini AI Chat</h4>
-                                <button class="btn btn-primary btn-sm" id="new-chat-btn">
-                                    <i class="fa fa-plus"></i> New Chat
-                                </button>
+                <!-- Landing Page Content -->
+                <div class="landing-container">
+                    <div class="landing-content">
+                        <h1 class="landing-title">
+                            <i class="fa fa-robot"></i> Gemini AI Chatbot
+                        </h1>
+                        <p class="landing-subtitle">
+                            Potenciado por Google Gemini - Tu asistente de IA inteligente y conversacional
+                        </p>
+                        
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa fa-brain"></i>
+                                </div>
+                                <h3 class="feature-title">IA Avanzada</h3>
+                                <p class="feature-description">
+                                    Utiliza los modelos más avanzados de Google Gemini para conversaciones naturales e inteligentes.
+                                </p>
                             </div>
                             
-                            <div class="chat-stats">
-                                <div class="stat-item">
-                                    <span class="stat-label">Session:</span>
-                                    <span class="stat-value" id="session-id">-</span>
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa fa-comments"></i>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Tokens Used:</span>
-                                    <span class="stat-value" id="tokens-used">0</span>
+                                <h3 class="feature-title">Chat Interactivo</h3>
+                                <p class="feature-description">
+                                    Interfaz de chat moderna y fácil de usar. Haz preguntas, obtén respuestas instantáneas.
+                                </p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa fa-cog"></i>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Messages:</span>
-                                    <span class="stat-value" id="message-count">0</span>
+                                <h3 class="feature-title">Personalizable</h3>
+                                <p class="feature-description">
+                                    Configura el comportamiento del chatbot, temperatura, tokens y prompts del sistema.
+                                </p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fa fa-history"></i>
+                                </div>
+                                <h3 class="feature-title">Historial</h3>
+                                <p class="feature-description">
+                                    Mantén un registro de todas tus conversaciones y sesiones de chat para referencia futura.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 40px; font-size: 1.1rem;">
+                            <i class="fa fa-arrow-down"></i> Haz clic en el botón flotante para comenzar a chatear
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Floating Chatbot Widget -->
+                <div class="chatbot-widget">
+                    <button class="chatbot-toggle" id="chatbot-toggle">
+                        <i class="fa fa-comments"></i>
+                    </button>
+                    
+                    <div class="chatbot-window" id="chatbot-window">
+                        <div class="widget-header">
+                            <h6 class="widget-title">
+                                <i class="fa fa-robot"></i> Gemini AI
+                            </h6>
+                            <button class="widget-close" id="widget-close">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="widget-messages" id="widget-messages">
+                            <div class="bot-message">
+                                <div class="message-avatar">
+                                    <i class="fa fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>¡Hola! Soy tu asistente Gemini AI. ¿En qué puedo ayudarte hoy?</p>
+                                    <small class="message-time">Ahora</small>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Chat Area -->
-                        <div class="col-md-9 chatbot-main">
-                            <div class="chat-header">
-                                <h5><i class="fa fa-comments"></i> Chat with Gemini AI</h5>
-                                <div class="model-info">
-                                    <small class="text-muted">Powered by Google Gemini</small>
-                                </div>
-                            </div>
-                            
-                            <!-- Chat Messages -->
-                            <div class="chat-messages" id="chat-messages">
-                                <div class="welcome-message">
-                                    <div class="bot-message">
-                                        <div class="message-avatar">
-                                            <i class="fa fa-robot"></i>
-                                        </div>
-                                        <div class="message-content">
-                                            <p>Hello! I'm your Gemini AI assistant. How can I help you today?</p>
-                                            <small class="message-time">Just now</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Chat Input -->
-                            <div class="chat-input-container">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="message-input" 
-                                           placeholder="Type your message here..." maxlength="2000"/>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button" id="send-btn">
-                                            <i class="fa fa-paper-plane"></i> Send
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="input-info">
-                                    <small class="text-muted">
-                                        Press Enter to send • <span id="char-count">0</span>/2000 characters
-                                    </small>
-                                </div>
+                        <div class="widget-input-container">
+                            <div class="widget-input-group">
+                                <input type="text" class="widget-input" id="widget-message-input" 
+                                       placeholder="Escribe tu mensaje..." maxlength="2000"/>
+                                <button class="widget-send-btn" id="widget-send-btn">
+                                    <i class="fa fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -91,6 +320,7 @@
                     let messageCount = 0;
                     let totalTokens = 0;
                     let isTyping = false;
+                    let isWidgetOpen = false;
 
                     $(document).ready(function() {
                         initializeChatbot();
@@ -99,71 +329,63 @@
 
                     function initializeChatbot() {
                         createNewSession();
-                        $('#message-input').focus();
                     }
 
                     function bindEvents() {
-                        $('#send-btn').click(sendMessage);
+                        // Widget toggle
+                        $('#chatbot-toggle').click(toggleWidget);
+                        $('#widget-close').click(closeWidget);
                         
-                        $('#message-input').keypress(function(e) {
+                        // Widget send message
+                        $('#widget-send-btn').click(sendWidgetMessage);
+                        
+                        $('#widget-message-input').keypress(function(e) {
                             if (e.which === 13 && !e.shiftKey) {
                                 e.preventDefault();
-                                sendMessage();
-                            }
-                        });
-
-                        $('#message-input').on('input', function() {
-                            const count = $(this).val().length;
-                            $('#char-count').text(count);
-                        });
-
-                        $('#new-chat-btn').click(createNewSession);
-                    }
-
-                    function createNewSession() {
-                        $.ajax({
-                            url: '/chatbot/new_session',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({params: {}}),
-                            success: function(response) {
-                                console.log('Session response:', response);
-                                // Handle JSON-RPC response format
-                                const data = response.result || response;
-                                if (data.success) {
-                                    currentSessionId = data.session_id;
-                                    updateSessionInfo();
-                                    clearChat();
-                                    showWelcomeMessage();
-                                    console.log('Session created:', currentSessionId);
-                                } else {
-                                    console.error('Failed to create session:', data.error);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Failed to create new session:', error);
+                                sendWidgetMessage();
                             }
                         });
                     }
-
-                    function sendMessage() {
-                        const message = $('#message-input').val().trim();
+                    
+                    function toggleWidget() {
+                        if (isWidgetOpen) {
+                            closeWidget();
+                        } else {
+                            openWidget();
+                        }
+                    }
+                    
+                    function openWidget() {
+                        $('#chatbot-window').addClass('active');
+                        $('#chatbot-toggle').html('<i class="fa fa-times"></i>');
+                        isWidgetOpen = true;
+                        $('#widget-message-input').focus();
+                    }
+                    
+                    function closeWidget() {
+                        $('#chatbot-window').removeClass('active');
+                        $('#chatbot-toggle').html('<i class="fa fa-comments"></i>');
+                        isWidgetOpen = false;
+                    }
+                    
+                    function sendWidgetMessage() {
+                        const message = $('#widget-message-input').val().trim();
                         
                         if (!message || isTyping) {
                             return;
                         }
 
                         if (!currentSessionId) {
-                            alert('No active session. Please refresh the page.');
+                            alert('No hay sesión activa. Por favor recarga la página.');
                             return;
                         }
 
-                        $('#message-input').val('');
-                        setSendButtonState(false);
+                        $('#widget-message-input').val('');
+                        setWidgetSendButtonState(false);
                         isTyping = true;
 
-                        addMessageToChat('user', message);
-                        showTypingIndicator();
+                        addWidgetMessage('user', message);
+                        showWidgetTypingIndicator();
 
                         $.ajax({
                             url: '/chatbot/send_message',
@@ -176,33 +398,53 @@
                                 }
                             }),
                             success: function(response) {
-                                hideTypingIndicator();
+                                hideWidgetTypingIndicator();
                                 console.log('Message response:', response);
                                 
-                                // Handle JSON-RPC response format
                                 const data = response.result || response;
                                 if (data.success) {
-                                    addMessageToChat('bot', data.bot_response);
+                                    addWidgetMessage('bot', data.bot_response);
                                     totalTokens += data.tokens_used || 0;
-                                    updateStats();
                                 } else {
-                                    addMessageToChat('bot', 'Sorry, I encountered an error: ' + data.error, true);
+                                    addWidgetMessage('bot', 'Lo siento, encontré un error: ' + data.error, true);
                                 }
                             },
                             error: function(xhr, status, error) {
-                                hideTypingIndicator();
+                                hideWidgetTypingIndicator();
                                 console.error('Send message error:', error);
-                                addMessageToChat('bot', 'Sorry, there was a connection error. Please try again.', true);
+                                addWidgetMessage('bot', 'Lo siento, hubo un error de conexión. Por favor intenta de nuevo.', true);
                             },
                             complete: function() {
-                                setSendButtonState(true);
+                                setWidgetSendButtonState(true);
                                 isTyping = false;
-                                $('#message-input').focus();
+                                $('#widget-message-input').focus();
                             }
                         });
                     }
 
-                    function addMessageToChat(type, content, isError) {
+                    function createNewSession() {
+                        $.ajax({
+                            url: '/chatbot/new_session',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({params: {}}),
+                            success: function(response) {
+                                console.log('Session response:', response);
+                                const data = response.result || response;
+                                if (data.success) {
+                                    currentSessionId = data.session_id;
+                                    console.log('Session created:', currentSessionId);
+                                } else {
+                                    console.error('Failed to create session:', data.error);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Failed to create new session:', error);
+                            }
+                        });
+                    }
+                    
+                    function addWidgetMessage(type, content, isError) {
                         const now = new Date();
                         const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         
@@ -218,21 +460,16 @@
                         contentDiv.append(textP).append(timeSmall);
                         messageDiv.append(avatarDiv).append(contentDiv);
 
-                        if (type === 'user') {
-                            $('.welcome-message').remove();
-                        }
-
-                        $('#chat-messages').append(messageDiv);
-                        scrollToBottom();
+                        $('#widget-messages').append(messageDiv);
+                        scrollWidgetToBottom();
                         
                         if (type === 'user') {
                             messageCount++;
-                            updateStats();
                         }
                     }
-
-                    function showTypingIndicator() {
-                        const typingDiv = $('<div>').addClass('bot-message typing-indicator').attr('id', 'typing-indicator');
+                    
+                    function showWidgetTypingIndicator() {
+                        const typingDiv = $('<div>').addClass('bot-message typing-indicator').attr('id', 'widget-typing-indicator');
                         const avatarDiv = $('<div>').addClass('message-avatar').html('<i class="fa fa-robot"></i>');
                         const dotsDiv = $('<div>').addClass('typing-dots');
                         
@@ -241,57 +478,27 @@
                         }
                         
                         typingDiv.append(avatarDiv).append(dotsDiv);
-                        $('#chat-messages').append(typingDiv);
-                        scrollToBottom();
+                        $('#widget-messages').append(typingDiv);
+                        scrollWidgetToBottom();
                     }
 
-                    function hideTypingIndicator() {
-                        $('#typing-indicator').remove();
+                    function hideWidgetTypingIndicator() {
+                        $('#widget-typing-indicator').remove();
                     }
-
-                    function showWelcomeMessage() {
-                        const welcomeDiv = $('<div>').addClass('welcome-message');
-                        const botDiv = $('<div>').addClass('bot-message');
-                        const avatarDiv = $('<div>').addClass('message-avatar').html('<i class="fa fa-robot"></i>');
-                        const contentDiv = $('<div>').addClass('message-content');
-                        const textP = $('<p>').text("Hello! I'm your Gemini AI assistant. How can I help you today?");
-                        const timeSmall = $('<small>').addClass('message-time').text('Just now');
-                        
-                        contentDiv.append(textP).append(timeSmall);
-                        botDiv.append(avatarDiv).append(contentDiv);
-                        welcomeDiv.append(botDiv);
-                        
-                        $('#chat-messages').append(welcomeDiv);
-                        scrollToBottom();
-                    }
-
-                    function clearChat() {
-                        $('#chat-messages').empty();
-                        messageCount = 0;
-                        totalTokens = 0;
-                        updateStats();
-                    }
-
-                    function updateSessionInfo() {
-                        $('#session-id').text(currentSessionId || '-');
-                    }
-
-                    function updateStats() {
-                        $('#tokens-used').text(totalTokens);
-                        $('#message-count').text(messageCount);
-                    }
-
-                    function setSendButtonState(enabled) {
+                    
+                    function setWidgetSendButtonState(enabled) {
                         if (enabled) {
-                            $('#send-btn').prop('disabled', false).html('<i class="fa fa-paper-plane"></i> Send');
+                            $('#widget-send-btn').prop('disabled', false).html('<i class="fa fa-paper-plane"></i>');
                         } else {
-                            $('#send-btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Sending...');
+                            $('#widget-send-btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i>');
                         }
                     }
-
-                    function scrollToBottom() {
-                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                    
+                    function scrollWidgetToBottom() {
+                        $('#widget-messages').scrollTop($('#widget-messages')[0].scrollHeight);
                     }
+
+
                 ]]></script>
             </body>
         </html>

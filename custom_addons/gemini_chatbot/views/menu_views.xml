@@ -37,7 +37,7 @@
     </record>
 
     <menuitem id="menu_chatbot_landing" 
-              name="Abrir Chatbot" 
+              name="Abrir Landing Page" 
               parent="menu_gemini_chatbot_root" 
               action="action_chatbot_landing" 
               sequence="5"/>
