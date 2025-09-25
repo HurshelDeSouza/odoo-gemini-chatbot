@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Dashboard Action -->
+    <record id="action_chatbot_dashboard" model="ir.actions.act_window">
+        <field name="name">Gemini Chatbot Dashboard</field>
+        <field name="res_model">chatbot.config</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                ¡Bienvenido al Gemini AI Chatbot!
+            </p>
+            <p>
+                Desde aquí puedes gestionar tu chatbot de IA. Usa el menú para:
+                <br/>• Abrir el chatbot
+                <br/>• Configurar las opciones
+                <br/>• Ver sesiones de chat
+                <br/>• Revisar mensajes
+            </p>
+        </field>
+    </record>
+
     <!-- Main Menu -->
     <menuitem id="menu_gemini_chatbot_root" 
               name="Gemini Chatbot" 
-              sequence="10"/>
+              sequence="10"
+              action="action_chatbot_dashboard"
+              web_icon="gemini_chatbot,static/description/icon.png"/>
 
     <!-- Configuration Menu -->
     <menuitem id="menu_chatbot_config" 
-              name="Configuration" 
+              name="Configuración" 
               parent="menu_gemini_chatbot_root" 
-              action="action_chatbot_config" 
+              action="gemini_chatbot.action_chatbot_config" 
               sequence="10"/>
 
     <!-- Chat Sessions Menu -->
@@ -34,7 +55,7 @@
     </record>
 
     <menuitem id="menu_chatbot_landing" 
-              name="Open Chatbot" 
+              name="Abrir Chatbot" 
               parent="menu_gemini_chatbot_root" 
               action="action_chatbot_landing" 
               sequence="5"/>
