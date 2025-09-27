@@ -13,11 +13,10 @@ class ChatbotConfig(models.Model):
     name = fields.Char('Configuration Name', required=True, default='Gemini Chatbot')
     api_key = fields.Char('Google API Key', required=True)
     model_name = fields.Selection([
-        ('gemini-1.5-pro', 'Gemini 1.5 Pro'),
-        ('gemini-1.5-flash', 'Gemini 1.5 Flash'),
-        ('gemini-pro', 'Gemini Pro'),
-        ('gemini-pro-vision', 'Gemini Pro Vision'),
-    ], string='Gemini Model', default='gemini-1.5-flash', required=True)
+        ('gemini-2.5-pro', 'Gemini 2.5 Pro - Razonamiento Avanzado'),
+        ('gemini-2.5-flash', 'Gemini 2.5 Flash - Velocidad y Calidad'),
+        ('gemini-2.5-flash-lite', 'Gemini 2.5 Flash Lite - Alto Volumen'),
+    ], string='Gemini Model', default='gemini-2.5-flash', required=True)
     
     max_tokens = fields.Integer('Max Tokens', default=1000)
     temperature = fields.Float('Temperature', default=0.7, help='Controls randomness (0.0 to 1.0)')
@@ -43,7 +42,7 @@ class ChatbotConfig(models.Model):
     def test_connection(self):
         """Test the API connection"""
         try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model_name}:generateContent"
+            url = f"https://generativelanguage.googleapis.com/v1/models/{self.model_name}:generateContent"
             headers = {
                 'Content-Type': 'application/json',
             }

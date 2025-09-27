@@ -47,7 +47,7 @@ class ChatMessage(models.Model):
             history = self._get_conversation_history(session_id)
             
             # Prepare API request
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{config.model_name}:generateContent"
+            url = f"https://generativelanguage.googleapis.com/v1/models/{config.model_name}:generateContent"
             
             contents = []
             

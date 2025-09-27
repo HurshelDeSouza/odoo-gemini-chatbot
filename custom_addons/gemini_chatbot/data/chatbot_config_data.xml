@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
         <!-- Default Chatbot Configuration -->
         <record id="default_chatbot_config" model="chatbot.config">
             <field name="name">Default Gemini Configuration</field>
-            <field name="api_key">AIzaSyCJ9iSf09mzRYp1aBCf80GevebsO1nSvFE</field>
-            <field name="model_name">gemini-1.5-flash</field>
+            <field name="api_key">AIzaSyDpRC6leEUa5SHJ1NoaHir4G0htoKT-HKk</field>
+            <field name="model_name">gemini-2.5-flash</field>
             <field name="max_tokens">1000</field>
             <field name="temperature">0.7</field>
             <field name="system_prompt">You are a helpful AI assistant powered by Google Gemini. You
