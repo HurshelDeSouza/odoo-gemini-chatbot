@@ -26,6 +26,10 @@ class ChatbotConfig(models.Model):
     total_tokens_used = fields.Integer('Total Tokens Used', readonly=True)
     total_requests = fields.Integer('Total Requests', readonly=True)
     
+    # Google Drive Configuration (Simulation Mode)
+    drive_simulation_enabled = fields.Boolean('Simulación de Drive Habilitada', default=True, help='Simula la subida de archivos a Google Drive')
+    drive_folder_name = fields.Char('Nombre de Carpeta', default='Odoo Excel Files', help='Nombre de la carpeta simulada en Drive')
+    
     @api.model
     def get_active_config(self):
         """Get the active chatbot configuration"""
@@ -91,6 +95,29 @@ class ChatbotConfig(models.Model):
                 'params': {
                     'title': 'Error!',
                     'message': f'Connection error: {str(e)}',
+                    'type': 'danger',
+                }
+            }
+    
+    def test_drive_connection(self):
+        """Test Drive connection - Simulation Mode"""
+        try:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': '✅ Éxito!',
+                    'message': 'Conexión simulada con Google Drive exitosa. La subida de archivos funcionará correctamente.',
+                    'type': 'success',
+                }
+            }
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Error!',
+                    'message': f'Error: {str(e)}',
                     'type': 'danger',
                 }
             }

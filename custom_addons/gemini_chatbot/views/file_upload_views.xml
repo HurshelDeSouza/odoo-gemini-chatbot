@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- File Upload Form View -->
+    <record id="view_file_upload_form" model="ir.ui.view">
+        <field name="name">chatbot.file.upload.form</field>
+        <field name="model">chatbot.file.upload</field>
+        <field name="arch" type="xml">
+            <form string="File Upload">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,uploading,success,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="filename"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="File Information">
+                            <field name="file_size" widget="integer"/>
+                            <field name="upload_date"/>
+                        </group>
+                        <group string="Google Drive">
+                            <field name="drive_file_id"/>
+                            <field name="drive_url" widget="url"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Error Details" invisible="status != 'error'">
+                        <field name="error_message" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- File Upload List View -->
+    <record id="view_file_upload_list" model="ir.ui.view">
+        <field name="name">chatbot.file.upload.list</field>
+        <field name="model">chatbot.file.upload</field>
+        <field name="arch" type="xml">
+            <list string="File Uploads">
+                <field name="filename"/>
+                <field name="file_size" widget="integer"/>
+                <field name="upload_date"/>
+                <field name="status" widget="badge" decoration-success="status == 'success'" decoration-danger="status == 'error'" decoration-warning="status == 'pending'" decoration-info="status == 'uploading'"/>
+                <field name="drive_url" widget="url"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- File Upload Action -->
+    <record id="action_file_upload" model="ir.actions.act_window">
+        <field name="name">Subidas de Archivos</field>
+        <field name="res_model">chatbot.file.upload</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay archivos subidos aún
+            </p>
+            <p>
+                Los archivos Excel subidos a Google Drive aparecerán aquí.
+            </p>
+        </field>
+    </record>
+</odoo>

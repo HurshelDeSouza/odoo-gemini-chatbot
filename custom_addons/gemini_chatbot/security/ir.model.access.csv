@@ -5,3 +5,5 @@ access_chat_message_user,chat.message.user,model_chat_message,base.group_user,1,
 access_chatbot_config_public,chatbot.config.public,model_chatbot_config,base.group_public,1,0,0,0
 access_chat_session_public,chat.session.public,model_chat_session,base.group_public,1,1,1,0
 access_chat_message_public,chat.message.public,model_chat_message,base.group_public,1,1,1,0
+access_file_upload_user,chatbot.file.upload.user,model_chatbot_file_upload,base.group_user,1,1,1,1
+access_file_upload_public,chatbot.file.upload.public,model_chatbot_file_upload,base.group_public,1,1,1,0

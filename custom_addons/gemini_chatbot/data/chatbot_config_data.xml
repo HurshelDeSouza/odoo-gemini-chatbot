@@ -13,6 +13,8 @@
                 responses. You can help with a wide variety of topics including answering questions,
                 providing explanations, helping with tasks, and having conversations.</field>
             <field name="active">True</field>
+            <field name="drive_simulation_enabled">True</field>
+            <field name="drive_folder_name">Odoo Excel Files</field>
         </record>
     </data>
 </odoo>

@@ -20,6 +20,7 @@
         'views/chatbot_config_views.xml',
         'views/chat_session_views.xml',
         'views/chat_message_views.xml',
+        'views/file_upload_views.xml',
         'views/chatbot_landing_views.xml',
         'views/menu_views.xml',
         'data/chatbot_config_data.xml',

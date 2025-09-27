@@ -198,6 +198,118 @@
                         }
                     }
                     
+                    /* Excel Upload Section */
+                    .excel-upload-section {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 40px;
+                        margin: 40px auto;
+                        max-width: 600px;
+                        text-align: center;
+                    }
+                    
+                    .upload-title {
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        margin-bottom: 15px;
+                        color: white;
+                    }
+                    
+                    .upload-description {
+                        margin-bottom: 30px;
+                        opacity: 0.9;
+                        font-size: 1.1rem;
+                    }
+                    
+                    .file-upload-area {
+                        border: 2px dashed rgba(255, 255, 255, 0.5);
+                        border-radius: 15px;
+                        padding: 40px 20px;
+                        margin-bottom: 20px;
+                        transition: all 0.3s ease;
+                        cursor: pointer;
+                    }
+                    
+                    .file-upload-area:hover {
+                        border-color: rgba(255, 255, 255, 0.8);
+                        background: rgba(255, 255, 255, 0.05);
+                    }
+                    
+                    .file-upload-area.dragover {
+                        border-color: #fff;
+                        background: rgba(255, 255, 255, 0.1);
+                    }
+                    
+                    .upload-icon {
+                        font-size: 3rem;
+                        margin-bottom: 15px;
+                        color: white;
+                    }
+                    
+                    .upload-text {
+                        font-size: 1.1rem;
+                        margin-bottom: 10px;
+                    }
+                    
+                    .upload-hint {
+                        font-size: 0.9rem;
+                        opacity: 0.8;
+                    }
+                    
+                    .file-input {
+                        display: none;
+                    }
+                    
+                    .upload-btn {
+                        background: #28a745;
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 25px;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        margin-top: 15px;
+                    }
+                    
+                    .upload-btn:hover {
+                        background: #218838;
+                        transform: translateY(-2px);
+                    }
+                    
+                    .upload-btn:disabled {
+                        background: #6c757d;
+                        cursor: not-allowed;
+                        transform: none;
+                    }
+                    
+                    .upload-progress {
+                        display: none;
+                        margin-top: 20px;
+                    }
+                    
+                    .progress-bar {
+                        background: rgba(255, 255, 255, 0.2);
+                        border-radius: 10px;
+                        height: 8px;
+                        overflow: hidden;
+                        margin-bottom: 10px;
+                    }
+                    
+                    .progress-fill {
+                        background: #28a745;
+                        height: 100%;
+                        width: 0%;
+                        transition: width 0.3s ease;
+                    }
+                    
+                    .upload-status {
+                        font-size: 0.9rem;
+                        opacity: 0.9;
+                    }
+                    
                     @media (max-width: 768px) {
                         .chatbot-window {
                             width: 300px;
@@ -210,6 +322,15 @@
                         
                         .features-grid {
                             grid-template-columns: 1fr;
+                        }
+                        
+                        .excel-upload-section {
+                            margin: 20px;
+                            padding: 30px 20px;
+                        }
+                        
+                        .upload-title {
+                            font-size: 1.5rem;
                         }
                     }
                 </style>
@@ -264,6 +385,40 @@
                                 <p class="feature-description">
                                     Mantén un registro de todas tus conversaciones y sesiones de chat para referencia futura.
                                 </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Excel Upload Section -->
+                        <div class="excel-upload-section">
+                            <h2 class="upload-title">
+                                <i class="fa fa-file-excel"></i> Subir Archivos Excel a Drive
+                            </h2>
+                            <p class="upload-description">
+                                Sube tus archivos Excel directamente a Google Drive de forma segura y rápida
+                            </p>
+                            
+                            <div class="file-upload-area" id="file-upload-area">
+                                <div class="upload-icon">
+                                    <i class="fa fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">
+                                    Arrastra tu archivo Excel aquí o haz clic para seleccionar
+                                </div>
+                                <div class="upload-hint">
+                                    Solo archivos .xlsx y .xls (máximo 10MB)
+                                </div>
+                                <input type="file" class="file-input" id="excel-file-input" accept=".xlsx,.xls"/>
+                            </div>
+                            
+                            <button class="upload-btn" id="upload-excel-btn" disabled="disabled">
+                                <i class="fa fa-upload"></i> Subir a Google Drive
+                            </button>
+                            
+                            <div class="upload-progress" id="upload-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
+                                <div class="upload-status" id="upload-status">Preparando subida...</div>
                             </div>
                         </div>
                         
@@ -345,6 +500,145 @@
                                 sendWidgetMessage();
                             }
                         });
+                        
+                        // File upload events
+                        bindFileUploadEvents();
+                    }
+                    
+                    function bindFileUploadEvents() {
+                        // File upload area click
+                        $('#file-upload-area').click(function() {
+                            $('#excel-file-input').click();
+                        });
+                        
+                        // File input change
+                        $('#excel-file-input').change(function(e) {
+                            handleFileSelect(e.target.files[0]);
+                        });
+                        
+                        // Drag and drop
+                        $('#file-upload-area').on('dragover', function(e) {
+                            e.preventDefault();
+                            $(this).addClass('dragover');
+                        });
+                        
+                        $('#file-upload-area').on('dragleave', function(e) {
+                            e.preventDefault();
+                            $(this).removeClass('dragover');
+                        });
+                        
+                        $('#file-upload-area').on('drop', function(e) {
+                            e.preventDefault();
+                            $(this).removeClass('dragover');
+                            
+                            const files = e.originalEvent.dataTransfer.files;
+                            if (files.length > 0) {
+                                handleFileSelect(files[0]);
+                            }
+                        });
+                        
+                        // Upload button
+                        $('#upload-excel-btn').click(uploadExcelFile);
+                    }
+                    
+                    let selectedFile = null;
+                    
+                    function handleFileSelect(file) {
+                        if (!file) return;
+                        
+                        // Validate file type
+                        const validTypes = ['.xlsx', '.xls'];
+                        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                        
+                        if (!validTypes.includes(fileExtension)) {
+                            alert('Solo se permiten archivos Excel (.xlsx, .xls)');
+                            return;
+                        }
+                        
+                        // Validate file size (10MB max)
+                        const maxSize = 10 * 1024 * 1024; // 10MB
+                        if (file.size > maxSize) {
+                            alert('El archivo es demasiado grande. Máximo 10MB permitido.');
+                            return;
+                        }
+                        
+                        selectedFile = file;
+                        
+                        // Update UI
+                        $('.upload-text').text(`Archivo seleccionado: ${file.name}`);
+                        $('.upload-hint').text(`Tamaño: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+                        $('#upload-excel-btn').prop('disabled', false);
+                    }
+                    
+                    function uploadExcelFile() {
+                        if (!selectedFile) {
+                            alert('Por favor selecciona un archivo Excel primero.');
+                            return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('excel_file', selectedFile);
+                        
+                        // Show progress
+                        $('#upload-progress').show();
+                        $('#upload-excel-btn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Subiendo...');
+                        
+                        // Simulate progress
+                        let progress = 0;
+                        const progressInterval = setInterval(function() {
+                            progress += Math.random() * 30;
+                            if (progress > 90) progress = 90;
+                            $('#progress-fill').css('width', progress + '%');
+                            $('#upload-status').text(`Subiendo... ${Math.round(progress)}%`);
+                        }, 200);
+                        
+                        $.ajax({
+                            url: '/chatbot/upload_excel',
+                            method: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                clearInterval(progressInterval);
+                                
+                                try {
+                                    const data = typeof response === 'string' ? JSON.parse(response) : response;
+                                    
+                                    if (data.success) {
+                                        $('#progress-fill').css('width', '100%');
+                                        $('#upload-status').html(`<i class="fa fa-check"></i> ${data.message}`);
+                                        
+                                        // Reset form after 3 seconds
+                                        setTimeout(resetUploadForm, 3000);
+                                    } else {
+                                        $('#upload-status').html(`<i class="fa fa-times"></i> Error: ${data.error}`);
+                                        resetUploadButton();
+                                    }
+                                } catch (e) {
+                                    $('#upload-status').html(`<i class="fa fa-times"></i> Error procesando respuesta`);
+                                    resetUploadButton();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                clearInterval(progressInterval);
+                                $('#upload-status').html(`<i class="fa fa-times"></i> Error de conexión: ${error}`);
+                                resetUploadButton();
+                            }
+                        });
+                    }
+                    
+                    function resetUploadForm() {
+                        selectedFile = null;
+                        $('#excel-file-input').val('');
+                        $('.upload-text').text('Arrastra tu archivo Excel aquí o haz clic para seleccionar');
+                        $('.upload-hint').text('Solo archivos .xlsx y .xls (máximo 10MB)');
+                        $('#upload-progress').hide();
+                        $('#progress-fill').css('width', '0%');
+                        resetUploadButton();
+                    }
+                    
+                    function resetUploadButton() {
+                        $('#upload-excel-btn').prop('disabled', true).html('<i class="fa fa-upload"></i> Subir a Google Drive');
                     }
                     
                     function toggleWidget() {

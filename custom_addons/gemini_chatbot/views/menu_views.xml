@@ -41,4 +41,11 @@
               parent="menu_gemini_chatbot_root" 
               action="action_chatbot_landing" 
               sequence="5"/>
+
+    <!-- File Uploads Menu -->
+    <menuitem id="menu_file_uploads" 
+              name="Subidas de Archivos" 
+              parent="menu_gemini_chatbot_root" 
+              action="action_file_upload" 
+              sequence="35"/>
 </odoo>

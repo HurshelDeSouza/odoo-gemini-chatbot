@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <form string="Chatbot Configuration">
                 <header>
-                    <button name="test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                    <button name="test_connection" string="Test Gemini Connection" type="object" class="btn-primary"/>
+                    <button name="test_drive_connection" string="Test Drive Connection" type="object" class="btn-success"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -36,6 +37,10 @@
                         <group string="Usage Statistics">
                             <field name="total_tokens_used" readonly="1"/>
                             <field name="total_requests" readonly="1"/>
+                        </group>
+                        <group string="Google Drive Configuration">
+                            <field name="drive_simulation_enabled"/>
+                            <field name="drive_folder_name" placeholder="Nombre de la carpeta en Drive"/>
                         </group>
                     </group>
                 </sheet>
