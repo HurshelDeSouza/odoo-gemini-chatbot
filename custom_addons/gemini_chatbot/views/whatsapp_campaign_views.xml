@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_whatsapp_campaign_form" model="ir.ui.view">
+        <field name="name">whatsapp.campaign.form</field>
+        <field name="model">gemini.whatsapp.campaign</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre de la Campaña"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_name"/>
+                            <field name="product_description"/>
+                            <field name="excel_file"/>
+                        </group>
+                        <group>
+                            <field name="landing_page_url" readonly="1"/>
+                            <field name="message_template"/>
+                        </group>
+                    </group>
+                    <div class="oe_chatter">
+                        <button name="send_whatsapp_messages" string="Enviar Mensajes WhatsApp" type="object" class="oe_highlight"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_whatsapp_campaign_list" model="ir.ui.view">
+        <field name="name">whatsapp.campaign.list</field>
+        <field name="model">gemini.whatsapp.campaign</field>
+        <field name="arch" type="xml">
+            <list string="Campañas WhatsApp">
+                <field name="name"/>
+                <field name="product_name"/>
+                <field name="landing_page_url"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_campaign" model="ir.actions.act_window">
+        <field name="name">Campañas WhatsApp</field>
+        <field name="res_model">gemini.whatsapp.campaign</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_whatsapp_campaign_list"/>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_whatsapp_campaign"
+              name="Campañas WhatsApp"
+              parent="menu_gemini_chatbot_root"
+              action="action_whatsapp_campaign"
+              sequence="30"/>
+</odoo>

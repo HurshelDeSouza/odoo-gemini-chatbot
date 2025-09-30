@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   web:
-    image: odoo:18.0
+    build: .
     container_name: odoo18_web
     depends_on:
       - db

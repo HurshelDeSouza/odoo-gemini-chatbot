@@ -7,3 +7,7 @@ access_chat_session_public,chat.session.public,model_chat_session,base.group_pub
 access_chat_message_public,chat.message.public,model_chat_message,base.group_public,1,1,1,0
 access_file_upload_user,chatbot.file.upload.user,model_chatbot_file_upload,base.group_user,1,1,1,1
 access_file_upload_public,chatbot.file.upload.public,model_chatbot_file_upload,base.group_public,1,1,1,0
+access_whatsapp_campaign_user,whatsapp.campaign.user,model_gemini_whatsapp_campaign,base.group_user,1,1,1,1
+access_whatsapp_campaign_public,whatsapp.campaign.public,model_gemini_whatsapp_campaign,base.group_public,1,0,0,0
+access_product_lead_user,product.lead.user,model_gemini_product_lead,base.group_user,1,1,1,1
+access_product_lead_public,product.lead.public,model_gemini_product_lead,base.group_public,1,1,1,0

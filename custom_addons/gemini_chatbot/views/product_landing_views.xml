@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Landing Page Template -->
+    <template id="product_landing_template" name="Product Landing Page">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>Nuevo Producto - Landing Page</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css"/>
+                <link rel="stylesheet" href="/gemini_chatbot/static/src/css/chatbot_frontend.css"/>
+                <style>
+                    .landing-container {
+                        min-height: 100vh;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        padding: 50px 0;
+                    }
+                    
+                    .product-form {
+                        background: white;
+                        padding: 30px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        max-width: 500px;
+                        margin: 0 auto;
+                    }
+                    
+                    .form-title {
+                        color: #333;
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+                    
+                    .product-details {
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 20px;
+                        border-radius: 10px;
+                        margin-bottom: 30px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="landing-container">
+                    <div class="container">
+                        <div class="product-details mb-4">
+                            <h1 t-field="campaign.product_name" class="text-center mb-3"/>
+                            <p t-field="campaign.product_description" class="text-center"/>
+                        </div>
+                        
+                        <div class="product-form">
+                            <h2 class="form-title">¡Solicita más información!</h2>
+                            <form id="leadForm" t-attf-action="/submit/lead/#{campaign.id}" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="form-group">
+                                    <label for="name">Nombre completo</label>
+                                    <input type="text" class="form-control" name="name" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Correo electrónico</label>
+                                    <input type="email" class="form-control" name="email" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Teléfono</label>
+                                    <input type="tel" class="form-control" name="phone" required="required"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Solicitar información</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#leadForm').on('submit', function(e) {
+                            e.preventDefault();
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                method: 'POST',
+                                data: $(this).serialize(),
+                                success: function(response) {
+                                    alert('¡Gracias por tu interés! Nos pondremos en contacto contigo pronto.');
+                                    $('#leadForm')[0].reset();
+                                },
+                                error: function() {
+                                    alert('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </body>
+        </html>
+    </template>
+</odoo>
