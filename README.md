@@ -1,68 +1,108 @@
-# Odoo Gemini Chatbot
+# Odoo Gemini Chatbot + WhatsApp Integration
 
-Este módulo integra un chatbot impulsado por Gemini AI en Odoo 18, permitiendo interacciones inteligentes con los usuarios.
+Módulo completo de Odoo 18 con:
+- 🤖 Chatbot impulsado por Gemini AI
+- 📱 Integración de WhatsApp para envío masivo
+- 🚀 API de WhatsApp con Node.js
 
-## Características
+## 🚀 Inicio Rápido
 
-- Integración con Gemini AI
-- Gestión de sesiones de chat
-- Interfaz de usuario amigable
-- Panel de administración para configuración
-- Historial de conversaciones
-- Personalización de respuestas
-
-## Requisitos
-
-- Docker y Docker Compose
-- Odoo 18.0
-- PostgreSQL 16
-
-## Instalación
-
-1. Clona este repositorio:
-```bash
-git clone https://github.com/HurshelDeSouza/odoo-gemini-chatbot.git
-cd odoo-gemini-chatbot
-```
-
-2. Inicia los contenedores:
+### 1. Iniciar Odoo
 ```bash
 docker-compose up -d
 ```
 
-3. Accede a Odoo:
+### 2. Iniciar API de WhatsApp
+```bash
+cd whatsapp-api
+Iniciar-API.bat
+```
+Escanea el QR con WhatsApp (solo primera vez)
+
+### 3. Acceder a Odoo
 - URL: http://localhost:8069
-- Base de datos: odoo_test
 - Usuario: admin
 - Contraseña: admin
 
-4. Instala el módulo:
-- Ve a Aplicaciones
-- Busca "Gemini Chatbot"
-- Haz clic en Instalar
+## 📱 WhatsApp Integration
 
-## Configuración
+### Enviar mensajes
+1. Ve a: **Gemini Chatbot > Campañas WhatsApp**
+2. Crea campaña
+3. Sube CSV con contactos
+4. Envía mensajes
 
-1. Ve a Configuración -> Gemini Chatbot
+### Formato CSV
+```csv
+nombre,whatsapp,email
+Cliente,5353065305,cliente@email.com
+```
+
+### Números soportados
+- 🇨🇺 Cuba: 5353065305
+- 🇨🇴 Colombia: 573001234567
+- 🌍 Internacional: código + número
+
+## 🤖 Gemini Chatbot
+
+1. Ve a: **Configuración > Gemini Chatbot**
 2. Configura tu API Key de Gemini
-3. Personaliza las respuestas del chatbot según tus necesidades
+3. Personaliza respuestas
 
-## Estructura del Proyecto
+## 📂 Estructura
 
 ```
-custom_addons/
-└── gemini_chatbot/
-    ├── controllers/      # Controladores HTTP
-    ├── models/          # Modelos de datos
-    ├── security/        # Reglas de acceso
-    ├── static/          # Archivos CSS/JS
-    └── views/           # Vistas XML
+├── whatsapp-api/              # API de WhatsApp (Node.js)
+│   ├── server.js              # Servidor principal
+│   └── Iniciar-API.bat        # Script de inicio
+│
+└── custom_addons/gemini_chatbot/
+    ├── controllers/           # Controladores HTTP
+    ├── models/                # Modelos de datos
+    ├── services/              # Servicios (WhatsApp)
+    ├── security/              # Reglas de acceso
+    ├── static/                # Archivos CSS/JS
+    └── views/                 # Vistas XML
 ```
 
-## Soporte
+## 🔧 Troubleshooting
 
-Para reportar problemas o solicitar nuevas características, por favor abre un issue en este repositorio.
+### Verificar API de WhatsApp
+```bash
+curl http://localhost:3000/status
+```
 
-## Licencia
+### Ver logs de Odoo
+```bash
+docker-compose logs -f web
+```
 
-Este proyecto está licenciado bajo los términos de la licencia MIT.
+### Reiniciar todo
+```bash
+docker-compose restart
+```
+
+## 📚 Documentación
+
+- `README_WHATSAPP.md` - Guía completa de WhatsApp
+- `PROBLEMA_SOLUCIONADO.md` - Detalles técnicos
+- `test-envio.ps1` - Script de prueba
+- `verificar-todo.bat` - Verificación completa
+
+## ✅ Características
+
+- ✅ Chatbot con Gemini AI
+- ✅ Envío masivo de WhatsApp
+- ✅ Detección automática de código de país
+- ✅ Soporte multi-país
+- ✅ Interfaz integrada en Odoo
+- ✅ Gestión de campañas
+- ✅ Historial de conversaciones
+
+## 🆘 Soporte
+
+Para problemas o nuevas características, abre un issue en este repositorio.
+
+## 📄 Licencia
+
+MIT License

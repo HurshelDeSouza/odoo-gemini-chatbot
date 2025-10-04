@@ -15,6 +15,9 @@
     'author': 'Your Company',
     'website': 'https://www.yourcompany.com',
     'depends': ['base', 'web'],
+    'external_dependencies': {
+        'python': ['requests'],
+    },
     'data': [
         'security/ir.model.access.csv',
         'views/chatbot_config_views.xml',

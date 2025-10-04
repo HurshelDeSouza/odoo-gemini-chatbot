@@ -1,9 +1,4 @@
 from odoo import models, fields, api
-import pandas as pd
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
-import io
 import logging
 import base64
 
@@ -158,12 +153,28 @@ class WhatsAppCampaign(models.Model):
                     
                     if number:
                         # Asegurarse de que el número tenga el formato correcto
-                        if len(number) == 10:  # Número local (ej: 3001234567)
-                            number = '57' + number
-                            _logger.info(f"Número con código de país agregado: {number}")
+                        # Soportar múltiples países
+                        if len(number) == 10 and number.startswith('53'):
+                            # Cuba: ya tiene código (ej: 5353065305)
+                            _logger.info(f"Número cubano detectado: {number}")
                             whatsapp_numbers.append(number)
-                        elif len(number) == 12 and number.startswith('57'):  # Número completo (ej: 573001234567)
-                            _logger.info(f"Número ya tiene formato correcto: {number}")
+                        elif len(number) == 8:
+                            # Cuba: 8 dígitos sin código (ej: 53065305)
+                            number = '53' + number
+                            _logger.info(f"Número cubano con código de país agregado: {number}")
+                            whatsapp_numbers.append(number)
+                        elif len(number) == 10 and number.startswith('3'):
+                            # Colombia: 10 dígitos (ej: 3001234567)
+                            number = '57' + number
+                            _logger.info(f"Número colombiano con código de país agregado: {number}")
+                            whatsapp_numbers.append(number)
+                        elif len(number) == 12 and number.startswith('57'):
+                            # Colombia: número completo (ej: 573001234567)
+                            _logger.info(f"Número colombiano ya tiene formato correcto: {number}")
+                            whatsapp_numbers.append(number)
+                        elif len(number) >= 10:
+                            # Cualquier otro número con código de país
+                            _logger.info(f"Número internacional: {number}")
                             whatsapp_numbers.append(number)
                         else:
                             _logger.warning(f"Número inválido encontrado: {number} (longitud: {len(number)})")
@@ -176,12 +187,15 @@ class WhatsAppCampaign(models.Model):
                 raise ValueError(
                     "No se encontraron números de WhatsApp válidos en el archivo.\n"
                     "Los números deben tener uno de estos formatos:\n"
-                    "1. Número local de 10 dígitos: 3001234567\n"
-                    "2. Número completo de 12 dígitos con código de país: 573001234567\n\n"
+                    "1. Cuba - 8 dígitos: 53065305 (se agrega código 53)\n"
+                    "2. Cuba - completo: 5353065305\n"
+                    "3. Colombia - 10 dígitos: 3001234567 (se agrega código 57)\n"
+                    "4. Colombia - completo: 573001234567\n"
+                    "5. Internacional: código de país + número\n\n"
                     "Por favor, verifica que los números en tu archivo:\n"
                     "- No contengan espacios, guiones o paréntesis\n"
                     "- No tengan el símbolo '+' al inicio\n"
-                    "- Sean números de celular colombianos válidos"
+                    "- Sean números de celular válidos"
                 )
             
             _logger.info(f"Total de números procesados: {len(whatsapp_numbers)}")
@@ -192,52 +206,48 @@ class WhatsAppCampaign(models.Model):
             raise ValueError(f"Error al procesar el archivo: {str(e)}")
 
     def send_whatsapp_messages(self):
-        """Envía mensajes de WhatsApp a todos los contactos"""
+        """Envía mensajes de WhatsApp a todos los contactos usando la API"""
+        from ..services.whatsapp_service import WhatsAppService
+        
         try:
+            # Inicializar servicio de WhatsApp
+            whatsapp = WhatsAppService()
+            
+            # Verificar conexión
+            status = whatsapp.check_status()
+            if status['status'] != 'ready':
+                raise ValueError(
+                    "WhatsApp no está conectado. Por favor:\n"
+                    "1. Ejecuta Iniciar-API.bat en la carpeta whatsapp-api\n"
+                    "2. Escanea el código QR con WhatsApp\n"
+                    "3. Espera a ver '✅ WhatsApp está listo!'"
+                )
+            
+            # Procesar números del archivo
             numbers = self.process_excel_file()
             total_numbers = len(numbers)
             _logger.info(f"Procesando {total_numbers} números de WhatsApp")
             
-            success_count = 0
-            failed_numbers = []
+            # Preparar mensaje
+            message = self.message_template.format(
+                product_name=self.product_name,
+                landing_url=self.landing_page_url
+            )
             
-            for number in numbers:
-                try:
-                    # Formatear el mensaje
-                    message = self.message_template.format(
-                        product_name=self.product_name,
-                        landing_url=self.landing_page_url
-                    )
-                    
-                    # Log del envío
-                    _logger.info(f"Enviando mensaje a: {number}")
-                    _logger.info(f"Mensaje: {message}")
-                    
-                    # Por ahora, simulamos un envío exitoso
-                    success_count += 1
-                    
-                    # Aquí iría la integración real con la API de WhatsApp
-                    # Ejemplo de código para WhatsApp Business API:
-                    # response = requests.post(
-                    #     'https://graph.facebook.com/v12.0/YOUR_PHONE_NUMBER_ID/messages',
-                    #     headers={'Authorization': f'Bearer {access_token}'},
-                    #     json={
-                    #         'messaging_product': 'whatsapp',
-                    #         'to': number,
-                    #         'type': 'text',
-                    #         'text': {'body': message}
-                    #     }
-                    # )
-                    
-                except Exception as e:
-                    _logger.error(f"Error enviando mensaje a {number}: {str(e)}")
-                    failed_numbers.append(number)
+            # Enviar mensajes masivos
+            result = whatsapp.send_bulk_messages(numbers, message)
+            
+            if not result.get('success'):
+                raise ValueError(f"Error en envío masivo: {result.get('error')}")
             
             # Crear mensaje de resultado
-            result_message = f"Mensajes enviados: {success_count} de {total_numbers}"
-            if failed_numbers:
-                result_message += f"\nFallaron: {len(failed_numbers)} números"
-                _logger.error(f"Números fallidos: {failed_numbers}")
+            sent = result.get('sent', 0)
+            failed = result.get('failed', 0)
+            result_message = f"Mensajes enviados: {sent} de {total_numbers}"
+            
+            if failed > 0:
+                result_message += f"\nFallaron: {failed} números"
+                _logger.warning(f"Resultados detallados: {result.get('results')}")
             
             # Mostrar mensaje al usuario
             return {
@@ -246,7 +256,7 @@ class WhatsAppCampaign(models.Model):
                 'params': {
                     'title': 'Envío de mensajes WhatsApp',
                     'message': result_message,
-                    'type': 'success' if not failed_numbers else 'warning',
+                    'type': 'success' if failed == 0 else 'warning',
                     'sticky': True,
                 }
             }
@@ -273,35 +283,3 @@ class ProductLead(models.Model):
     phone = fields.Char('Teléfono', required=True)
     campaign_id = fields.Many2one('gemini.whatsapp.campaign', 'Campaña')
     date = fields.Datetime('Fecha', default=fields.Datetime.now)
-    
-    def export_to_drive(self):
-        """Exporta los leads a Google Drive"""
-        # Configuración de Google Drive
-        creds = self._get_google_credentials()
-        service = build('drive', 'v3', credentials=creds)
-        
-        # Crear DataFrame con los leads
-        leads_data = self.search_read([])
-        df = pd.DataFrame(leads_data)
-        
-        # Convertir a Excel
-        output = io.BytesIO()
-        df.to_excel(output, index=False)
-        output.seek(0)
-        
-        # Subir a Drive
-        file_metadata = {'name': 'Product_Leads.xlsx'}
-        media = MediaIoBaseUpload(output, 
-                                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                resumable=True)
-        
-        file = service.files().create(body=file_metadata,
-                                    media_body=media,
-                                    fields='id').execute()
-        return file.get('id')
-    
-    def _get_google_credentials(self):
-        """Obtiene las credenciales de Google Drive"""
-        # Implementar la lógica de autenticación con Google
-        # Esto dependerá de cómo quieras manejar las credenciales
-        pass
