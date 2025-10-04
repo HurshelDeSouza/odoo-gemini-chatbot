@@ -7,13 +7,6 @@
               sequence="10"
               web_icon="gemini_chatbot,static/description/icon.png"/>
 
-    <!-- Configuration Menu -->
-    <menuitem id="menu_chatbot_config" 
-              name="Configuración" 
-              parent="menu_gemini_chatbot_root" 
-              action="gemini_chatbot.action_chatbot_config" 
-              sequence="10"/>
-
     <!-- Chat Sessions Menu -->
     <menuitem id="menu_chat_sessions" 
               name="Chat Sessions" 
