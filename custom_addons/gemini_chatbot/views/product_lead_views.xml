@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Lead List View -->
+    <record id="view_product_lead_list" model="ir.ui.view">
+        <field name="name">product.lead.list</field>
+        <field name="model">gemini.product.lead</field>
+        <field name="arch" type="xml">
+            <list string="Leads Registrados">
+                <header>
+                    <button name="action_export_to_csv" 
+                            string="Exportar a CSV" 
+                            type="object" 
+                            class="btn-primary"/>
+                </header>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="campaign_id"/>
+                <field name="date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Product Lead Form View -->
+    <record id="view_product_lead_form" model="ir.ui.view">
+        <field name="name">product.lead.form</field>
+        <field name="model">gemini.product.lead</field>
+        <field name="arch" type="xml">
+            <form string="Lead">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                        <group>
+                            <field name="campaign_id"/>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Product Lead Action -->
+    <record id="action_product_lead" model="ir.actions.act_window">
+        <field name="name">Leads Registrados</field>
+        <field name="res_model">gemini.product.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_product_lead_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay leads registrados aún
+            </p>
+            <p>
+                Los usuarios que se registren en las landing pages aparecerán aquí.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_product_lead"
+              name="Leads Registrados"
+              parent="menu_gemini_chatbot_root"
+              action="action_product_lead"
+              sequence="25"/>
+</odoo>

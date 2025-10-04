@@ -388,6 +388,69 @@
                             </div>
                         </div>
                         
+                        <!-- Registration Form Section -->
+                        <div class="excel-upload-section">
+                            <h2 class="upload-title">
+                                <i class="fa fa-mobile-alt"></i> ¡Regístrate Ahora!
+                            </h2>
+                            <p class="upload-description">
+                                Déjanos tus datos y te enviaremos más información por WhatsApp
+                            </p>
+                            
+                            <form id="leadRegistrationForm" action="/chatbot/register_lead" method="post" style="text-align: left;">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; color: white; font-weight: 500;">
+                                        <i class="fa fa-user"></i> Nombre completo
+                                    </label>
+                                    <input type="text" 
+                                           name="name" 
+                                           placeholder="Ej: Juan Pérez"
+                                           required="required"
+                                           style="width: 100%; padding: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; font-size: 1rem; background: rgba(255,255,255,0.9);"/>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; color: white; font-weight: 500;">
+                                        <i class="fa fa-whatsapp" style="color: #25D366;"></i> Número de WhatsApp
+                                    </label>
+                                    <input type="tel" 
+                                           name="phone" 
+                                           id="phone-input"
+                                           placeholder="Ej: 5353065305"
+                                           required="required"
+                                           style="width: 100%; padding: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; font-size: 1rem; background: rgba(255,255,255,0.9);"/>
+                                    <small style="display: block; margin-top: 5px; color: rgba(255,255,255,0.8); font-size: 0.85rem;">
+                                        Ingresa tu número con código de país (sin +)
+                                    </small>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; margin-bottom: 8px; color: white; font-weight: 500;">
+                                        <i class="fa fa-envelope"></i> Correo electrónico
+                                    </label>
+                                    <input type="email" 
+                                           name="email" 
+                                           placeholder="Ej: correo@ejemplo.com"
+                                           required="required"
+                                           style="width: 100%; padding: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; font-size: 1rem; background: rgba(255,255,255,0.9);"/>
+                                </div>
+                                
+                                <button type="submit" class="upload-btn" id="submit-lead-btn" style="margin-top: 10px;">
+                                    <i class="fa fa-paper-plane"></i> Enviar información
+                                </button>
+                            </form>
+                            
+                            <div id="lead-success-message" style="display: none; background: #28a745; color: white; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                                <i class="fa fa-check-circle"></i> ¡Gracias! Tu información ha sido registrada. Te contactaremos pronto por WhatsApp.
+                            </div>
+                            
+                            <div id="lead-error-message" style="display: none; background: #dc3545; color: white; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                                <i class="fa fa-exclamation-circle"></i> Hubo un error. Por favor, intenta nuevamente.
+                            </div>
+                        </div>
+                        
                         <!-- Excel Upload Section -->
                         <div class="excel-upload-section">
                             <h2 class="upload-title">
@@ -503,6 +566,63 @@
                         
                         // File upload events
                         bindFileUploadEvents();
+                        
+                        // Registration form events
+                        bindRegistrationFormEvents();
+                    }
+                    
+                    function bindRegistrationFormEvents() {
+                        // Phone number formatting
+                        $('#phone-input').on('input', function() {
+                            let value = $(this).val().replace(/\D/g, '');
+                            $(this).val(value);
+                        });
+                        
+                        // Form submission
+                        $('#leadRegistrationForm').on('submit', function(e) {
+                            e.preventDefault();
+                            
+                            const submitBtn = $('#submit-lead-btn');
+                            const originalText = submitBtn.html();
+                            
+                            // Disable button and show loading
+                            submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Enviando...');
+                            
+                            // Hide previous messages
+                            $('#lead-success-message, #lead-error-message').hide();
+                            
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                method: 'POST',
+                                data: $(this).serialize(),
+                                success: function(response) {
+                                    try {
+                                        const data = typeof response === 'string' ? JSON.parse(response) : response;
+                                        
+                                        if (data.success) {
+                                            $('#lead-success-message').show();
+                                            $('#leadRegistrationForm')[0].reset();
+                                            
+                                            // Reset button after 5 seconds
+                                            setTimeout(function() {
+                                                submitBtn.prop('disabled', false).html(originalText);
+                                                $('#lead-success-message').hide();
+                                            }, 5000);
+                                        } else {
+                                            $('#lead-error-message').text(data.error || 'Error al procesar tu solicitud').show();
+                                            submitBtn.prop('disabled', false).html(originalText);
+                                        }
+                                    } catch (e) {
+                                        $('#lead-error-message').text('Error al procesar la respuesta').show();
+                                        submitBtn.prop('disabled', false).html(originalText);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    $('#lead-error-message').text('Error de conexión. Por favor, intenta nuevamente.').show();
+                                    submitBtn.prop('disabled', false).html(originalText);
+                                }
+                            });
+                        });
                     }
                     
                     function bindFileUploadEvents() {

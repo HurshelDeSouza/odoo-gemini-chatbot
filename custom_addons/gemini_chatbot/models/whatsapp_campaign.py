@@ -283,3 +283,42 @@ class ProductLead(models.Model):
     phone = fields.Char('Teléfono', required=True)
     campaign_id = fields.Many2one('gemini.whatsapp.campaign', 'Campaña')
     date = fields.Datetime('Fecha', default=fields.Datetime.now)
+    
+    _sql_constraints = [
+        ('phone_unique', 'UNIQUE(phone)', 'Este número de teléfono ya está registrado. Por favor, usa otro número.')
+    ]
+    
+    def action_export_to_csv(self):
+        """Exporta los leads seleccionados a CSV para usar en campañas de WhatsApp"""
+        import csv
+        import io
+        from odoo.http import request
+        
+        # Crear CSV en memoria
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Escribir encabezados
+        writer.writerow(['nombre', 'whatsapp', 'email'])
+        
+        # Escribir datos
+        for lead in self:
+            writer.writerow([lead.name, lead.phone, lead.email])
+        
+        # Obtener contenido
+        csv_content = output.getvalue()
+        output.close()
+        
+        # Crear archivo adjunto
+        attachment = self.env['ir.attachment'].create({
+            'name': f'leads_export_{fields.Datetime.now().strftime("%Y%m%d_%H%M%S")}.csv',
+            'type': 'binary',
+            'datas': base64.b64encode(csv_content.encode('utf-8')),
+            'mimetype': 'text/csv',
+        })
+        
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'new',
+        }

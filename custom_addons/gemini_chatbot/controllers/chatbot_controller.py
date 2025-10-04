@@ -12,6 +12,49 @@ class ChatbotController(http.Controller):
         """Chatbot landing page"""
         return request.render('gemini_chatbot.chatbot_landing_template')
     
+    @http.route('/chatbot/register_lead', type='http', auth='public', website=True, methods=['POST'], csrf=True)
+    def register_lead(self, **post):
+        """Registra un lead desde la landing page del chatbot"""
+        try:
+            # Verificar si el teléfono ya existe
+            existing_lead = request.env['gemini.product.lead'].sudo().search([
+                ('phone', '=', post.get('phone'))
+            ], limit=1)
+            
+            if existing_lead:
+                return json.dumps({
+                    'success': False,
+                    'error': 'Este número de teléfono ya está registrado. Si ya te registraste antes, te contactaremos pronto.'
+                })
+            
+            # Crear el lead
+            lead = request.env['gemini.product.lead'].sudo().create({
+                'name': post.get('name'),
+                'email': post.get('email'),
+                'phone': post.get('phone'),
+                'campaign_id': False,  # No está asociado a ninguna campaña específica
+            })
+            
+            return json.dumps({
+                'success': True,
+                'message': '¡Gracias! Tu información ha sido registrada correctamente.'
+            })
+        except Exception as e:
+            error_msg = str(e)
+            _logger.error(f"Error al registrar lead: {error_msg}")
+            
+            # Manejar error de duplicado de la base de datos
+            if 'phone_unique' in error_msg or 'duplicate key' in error_msg.lower():
+                return json.dumps({
+                    'success': False,
+                    'error': 'Este número de teléfono ya está registrado. Si ya te registraste antes, te contactaremos pronto.'
+                })
+            
+            return json.dumps({
+                'success': False,
+                'error': 'Error al procesar tu solicitud. Por favor, intenta nuevamente.'
+            })
+    
     @http.route('/chatbot/send_message', type='json', auth='public', methods=['POST'])
     def send_message(self, message=None, session_id=None, **kwargs):
         """Send message to chatbot"""
