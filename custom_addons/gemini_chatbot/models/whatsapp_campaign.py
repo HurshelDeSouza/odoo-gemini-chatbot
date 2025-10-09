@@ -16,6 +16,28 @@ class WhatsAppCampaign(models.Model):
     landing_page_url = fields.Char('URL Landing Page', compute='_compute_landing_url')
     message_template = fields.Text('Plantilla de Mensaje', required=True)
     
+    # Control de envío
+    max_messages_per_batch = fields.Integer('Máximo de Mensajes por Lote', default=25, 
+                                           help='Cantidad máxima de mensajes a enviar de una vez (recomendado: 20-30)')
+    delay_between_messages = fields.Integer('Delay entre Mensajes (segundos)', default=3,
+                                           help='Tiempo de espera entre cada mensaje (recomendado: 2-5 segundos)')
+    total_contacts = fields.Integer('Total de Contactos', compute='_compute_total_contacts', store=True)
+    messages_sent = fields.Integer('Mensajes Enviados', default=0)
+    messages_failed = fields.Integer('Mensajes Fallidos', default=0)
+    last_send_date = fields.Datetime('Última Fecha de Envío')
+    
+    @api.depends('excel_file')
+    def _compute_total_contacts(self):
+        for record in self:
+            if record.excel_file:
+                try:
+                    numbers = record.process_excel_file()
+                    record.total_contacts = len(numbers)
+                except:
+                    record.total_contacts = 0
+            else:
+                record.total_contacts = 0
+    
     @api.depends('name')
     def _compute_landing_url(self):
         for record in self:
@@ -253,8 +275,9 @@ class WhatsAppCampaign(models.Model):
             raise ValueError(f"Error al procesar el archivo: {str(e)}")
 
     def send_whatsapp_messages(self):
-        """Envía mensajes de WhatsApp a todos los contactos usando la API"""
+        """Envía mensajes de WhatsApp a todos los contactos usando la API con control de límites"""
         from ..services.whatsapp_service import WhatsAppService
+        import time
         
         try:
             # Inicializar servicio de WhatsApp
@@ -273,7 +296,28 @@ class WhatsAppCampaign(models.Model):
             # Procesar números del archivo
             numbers = self.process_excel_file()
             total_numbers = len(numbers)
-            _logger.info(f"Procesando {total_numbers} números de WhatsApp")
+            _logger.info(f"📊 Total de números a procesar: {total_numbers}")
+            
+            # Validar límite de seguridad
+            if total_numbers > self.max_messages_per_batch:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': '⚠️ Límite de Seguridad',
+                        'message': f"Tu archivo tiene {total_numbers} contactos, pero el límite configurado es {self.max_messages_per_batch}.\n\n"
+                                 f"Para evitar bloqueos de WhatsApp:\n"
+                                 f"1. Divide tu archivo en lotes más pequeños\n"
+                                 f"2. O aumenta el límite en el campo 'Máximo de Mensajes por Lote'\n\n"
+                                 f"Recomendación: No envíes más de 25-30 mensajes por hora.",
+                        'type': 'warning',
+                        'sticky': True,
+                    }
+                }
+            
+            # Advertencia si el número es alto
+            if total_numbers > 30:
+                _logger.warning(f"⚠️ ADVERTENCIA: Enviando {total_numbers} mensajes. Riesgo de bloqueo.")
             
             # Preparar mensaje
             message = self.message_template.format(
@@ -281,27 +325,63 @@ class WhatsAppCampaign(models.Model):
                 landing_url=self.landing_page_url
             )
             
-            # Enviar mensajes masivos
-            result = whatsapp.send_bulk_messages(numbers, message)
+            _logger.info(f"⏱️ Delay configurado: {self.delay_between_messages} segundos entre mensajes")
+            _logger.info(f"⏱️ Tiempo estimado: {(total_numbers * self.delay_between_messages) / 60:.1f} minutos")
             
-            if not result.get('success'):
-                raise ValueError(f"Error en envío masivo: {result.get('error')}")
+            # Enviar mensajes uno por uno con control de delay
+            sent = 0
+            failed = 0
+            results = []
+            
+            for i, phone in enumerate(numbers, 1):
+                try:
+                    _logger.info(f"📤 Enviando mensaje {i}/{total_numbers} a {phone}")
+                    result = whatsapp.send_message(phone, message)
+                    
+                    if result.get('success'):
+                        sent += 1
+                        results.append({'phone': phone, 'success': True})
+                        _logger.info(f"✅ Mensaje {i}/{total_numbers} enviado correctamente")
+                    else:
+                        failed += 1
+                        results.append({'phone': phone, 'success': False, 'error': result.get('error')})
+                        _logger.error(f"❌ Error en mensaje {i}/{total_numbers}: {result.get('error')}")
+                    
+                    # Delay entre mensajes (excepto en el último)
+                    if i < total_numbers:
+                        _logger.info(f"⏸️ Esperando {self.delay_between_messages} segundos...")
+                        time.sleep(self.delay_between_messages)
+                        
+                except Exception as e:
+                    failed += 1
+                    results.append({'phone': phone, 'success': False, 'error': str(e)})
+                    _logger.error(f"❌ Excepción en mensaje {i}/{total_numbers}: {str(e)}")
+            
+            # Actualizar estadísticas
+            self.messages_sent = sent
+            self.messages_failed = failed
+            self.last_send_date = fields.Datetime.now()
             
             # Crear mensaje de resultado
-            sent = result.get('sent', 0)
-            failed = result.get('failed', 0)
-            result_message = f"Mensajes enviados: {sent} de {total_numbers}"
+            result_message = f"✅ Envío completado:\n\n"
+            result_message += f"📤 Mensajes enviados: {sent} de {total_numbers}\n"
             
             if failed > 0:
-                result_message += f"\nFallaron: {failed} números"
-                _logger.warning(f"Resultados detallados: {result.get('results')}")
+                result_message += f"❌ Mensajes fallidos: {failed}\n"
+            
+            result_message += f"\n⏱️ Tiempo total: {(total_numbers * self.delay_between_messages) / 60:.1f} minutos"
+            
+            if sent > 0:
+                result_message += f"\n\n💡 Recomendación: Espera al menos 1 hora antes de enviar más mensajes."
+            
+            _logger.info(f"📊 Resumen final: {sent} enviados, {failed} fallidos")
             
             # Mostrar mensaje al usuario
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': 'Envío de mensajes WhatsApp',
+                    'title': '📱 Envío de Mensajes WhatsApp',
                     'message': result_message,
                     'type': 'success' if failed == 0 else 'warning',
                     'sticky': True,
@@ -309,12 +389,12 @@ class WhatsAppCampaign(models.Model):
             }
             
         except Exception as e:
-            _logger.error(f"Error en el proceso de envío: {str(e)}")
+            _logger.error(f"❌ Error en el proceso de envío: {str(e)}")
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': 'Error',
+                    'title': '❌ Error',
                     'message': f"Error al procesar el envío: {str(e)}",
                     'type': 'danger',
                     'sticky': True,
