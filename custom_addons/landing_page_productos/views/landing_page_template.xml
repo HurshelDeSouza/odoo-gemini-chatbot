@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="landing_template" name="Landing Page Productos">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <!-- Barra superior con oferta -->
+                <div class="top-banner">
+                    <div class="container">
+                        <p class="text-center mb-0">
+                            <i class="fa fa-gift"></i> 30% de descuento en toda la tienda <i class="fa fa-gift"></i>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contenido principal -->
+                <div class="landing-container">
+                    <div class="container py-5">
+                        <div class="row align-items-center">
+                            <!-- Columna izquierda - Imagen del producto -->
+                            <div class="col-lg-6 mb-4 mb-lg-0">
+                                <div class="product-image-section">
+                                    <div class="main-image">
+                                        <img src="/landing_page_productos/static/src/img/producto-placeholder.jpg" 
+                                             alt="Producto" 
+                                             class="img-fluid rounded shadow-lg"
+                                             id="mainProductImage"/>
+                                    </div>
+                                    <div class="offer-badge">
+                                        <h3>OFERTA ESPECIAL</h3>
+                                        <div class="price-options">
+                                            <p>1X $89,900</p>
+                                            <p>2X $119,900</p>
+                                            <p class="highlight">3X $159,900</p>
+                                        </div>
+                                        <p class="small-text">Con envío GRATIS y<br/>Pago Contrareembolso</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Columna derecha - Información y formulario -->
+                            <div class="col-lg-6">
+                                <div class="product-info">
+                                    <div class="stats mb-3">
+                                        <span class="badge bg-success">+753 Pedidos Realizados en 7 días</span>
+                                        <p class="text-muted small mt-2">
+                                            <i class="fa fa-clock-o"></i> Llegará entre 15 octubre y 16 octubre
+                                        </p>
+                                    </div>
+
+                                    <h1 class="product-title mb-3">
+                                        Nuestro Producto Premium
+                                    </h1>
+
+                                    <div class="price-section mb-3">
+                                        <span class="old-price">$173,900.00</span>
+                                        <span class="current-price">$89,900.00</span>
+                                        <span class="discount-badge">Oferta</span>
+                                    </div>
+
+                                    <div class="rating mb-4">
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star text-warning"></i>
+                                        <i class="fa fa-star-half-o text-warning"></i>
+                                        <span class="ms-2">(1,650 Reseñas)</span>
+                                    </div>
+
+                                    <!-- Botón para abrir el formulario -->
+                                    <button type="button" class="btn btn-contraentrega btn-lg w-100 mb-4" id="openFormBtn">
+                                        <i class="fa fa-shopping-cart"></i> Pagar Contraentrega
+                                        <br/>
+                                        <small>Tu pedido llegará en 3 a 5 días hábiles</small>
+                                    </button>
+
+                                    <!-- Badges de confianza -->
+                                    <div class="trust-badges mt-4">
+                                        <div class="row text-center">
+                                            <div class="col-3">
+                                                <div class="badge-item">
+                                                    <i class="fa fa-shield fa-2x"></i>
+                                                    <p class="small">Compra Segura</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="badge-item">
+                                                    <i class="fa fa-truck fa-2x"></i>
+                                                    <p class="small">Envío Gratis</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="badge-item">
+                                                    <i class="fa fa-check-circle fa-2x"></i>
+                                                    <p class="small">Garantizado</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="badge-item">
+                                                    <i class="fa fa-star fa-2x"></i>
+                                                    <p class="small">Calidad</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Garantía -->
+                                    <div class="guarantee-box mt-4">
+                                        <h4>¡Le garantizamos que si no le deja pidiendo más le devolvemos su dinero!</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal del formulario -->
+                <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">PAGO CONTRA REEMBOLSO</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Opciones de paquetes -->
+                                <div class="package-options mb-4">
+                                    <div class="package-option" data-package="1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Compra 1 unidad + 1 Lubricante GRATIS</strong>
+                                                <span class="badge bg-secondary ms-2">Ahorra 0%</span>
+                                            </div>
+                                            <div class="package-price">$89,900.00</div>
+                                        </div>
+                                    </div>
+                                    <div class="package-option selected" data-package="2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>¡Compra 2 unidades con un 35% de descuento y 3 Lubricantes GRATIS!</strong>
+                                                <span class="badge bg-danger ms-2">Ahorra 35%</span>
+                                            </div>
+                                            <div class="package-price">$119,900.00</div>
+                                        </div>
+                                    </div>
+                                    <div class="package-option" data-package="3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>¡Compra 3 unidades con un 45% de descuento y 6 Lubricantes GRATIS!</strong>
+                                                <span class="badge bg-danger ms-2">Ahorra 45%</span>
+                                            </div>
+                                            <div class="package-price">
+                                                <span class="text-decoration-line-through text-muted">$260,700.00</span>
+                                                $159,900.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Resumen de pedido -->
+                                <div class="order-summary mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal</span>
+                                        <span id="subtotal">$179,800.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Envío</span>
+                                        <span class="text-success">Gratis</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Descuentos 🎁</span>
+                                        <span class="text-danger" id="discount">-$59,900.00</span>
+                                    </div>
+                                    <hr/>
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Total</strong>
+                                        <strong id="total">$119,900.00</strong>
+                                    </div>
+                                </div>
+
+                                <div class="shipping-method mb-4">
+                                    <h6>Método de envío</h6>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="shipping" id="freeShipping" checked="checked"/>
+                                        <label class="form-check-label" for="freeShipping">
+                                            Envío gratis <span class="float-end">Gratis</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning text-center mb-4">
+                                    <strong>¡Ahorraste 50% +Envío GRATIS!</strong><br/>
+                                    Asegúrate de agregar correctamente la dirección para evitar contratiempos 😍
+                                </div>
+
+                                <!-- Formulario -->
+                                <form id="leadForm">
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Teléfono <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                            <input type="tel" class="form-control" name="phone" placeholder="Teléfono" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Nombre <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                            <input type="text" class="form-control" name="name" placeholder="Nombre" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Apellido <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                            <input type="text" class="form-control" name="lastname" placeholder="Apellido" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Departamento <span class="text-danger">*</span></div>
+                                        <select class="form-control form-select" name="department" required="required">
+                                                <option value="">Departamento</option>
+                                                <option value="Amazonas">Amazonas</option>
+                                                <option value="Antioquia">Antioquia</option>
+                                                <option value="Arauca">Arauca</option>
+                                                <option value="Atlántico">Atlántico</option>
+                                                <option value="Bolívar">Bolívar</option>
+                                                <option value="Boyacá">Boyacá</option>
+                                                <option value="Caldas">Caldas</option>
+                                                <option value="Caquetá">Caquetá</option>
+                                                <option value="Casanare">Casanare</option>
+                                                <option value="Cauca">Cauca</option>
+                                                <option value="Cesar">Cesar</option>
+                                                <option value="Chocó">Chocó</option>
+                                                <option value="Córdoba">Córdoba</option>
+                                                <option value="Cundinamarca">Cundinamarca</option>
+                                                <option value="Guainía">Guainía</option>
+                                                <option value="Guaviare">Guaviare</option>
+                                                <option value="Huila">Huila</option>
+                                                <option value="La Guajira">La Guajira</option>
+                                                <option value="Magdalena">Magdalena</option>
+                                                <option value="Meta">Meta</option>
+                                                <option value="Nariño">Nariño</option>
+                                                <option value="Norte de Santander">Norte de Santander</option>
+                                                <option value="Putumayo">Putumayo</option>
+                                                <option value="Quindío">Quindío</option>
+                                                <option value="Risaralda">Risaralda</option>
+                                                <option value="San Andrés y Providencia">San Andrés y Providencia</option>
+                                                <option value="Santander">Santander</option>
+                                                <option value="Sucre">Sucre</option>
+                                                <option value="Tolima">Tolima</option>
+                                                <option value="Valle del Cauca">Valle del Cauca</option>
+                                                <option value="Vaupés">Vaupés</option>
+                                                <option value="Vichada">Vichada</option>
+                                            </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Ciudad <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
+                                            <input type="text" class="form-control" name="city" placeholder="Ciudad" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Dirección Exacta <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                            <input type="text" class="form-control" name="address" placeholder="Eje: Calle 52c #13 sur -34" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Barrio <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-list"></i></span>
+                                            <input type="text" class="form-control" name="neighborhood" placeholder="Nombre del barrio" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Confirme su teléfono <span class="text-danger">*</span></div>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-list"></i></span>
+                                            <input type="tel" class="form-control" name="phone_confirm" placeholder="Número celular" required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-field-label">Correo electrónico</div>
+                                        <div class="input-group">
+                                            <span class="input-group-text">@</span>
+                                            <input type="email" class="form-control" name="email" placeholder="Correo electrónico (Opcional)"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check mb-4 priority-shipping">
+                                        <input class="form-check-input" type="checkbox" name="priority_shipping" id="priorityShipping"/>
+                                        <label class="form-check-label" for="priorityShipping">
+                                            Agregar <strong>ENVÍO PRIORITARIO</strong> por solo <strong>$5,000.00</strong> Su pedido se despachará más rápido que los otros y llegará más rápido.
+                                        </label>
+                                    </div>
+
+                                    <input type="hidden" name="product_interest" id="selectedPackage" value="Paquete 2"/>
+
+                                    <button type="submit" class="btn btn-contraentrega-submit btn-lg w-100">
+                                        <i class="fa fa-shopping-cart"></i> PEDIR CONTRAENTREGA - <span id="btnTotal">$119,900.00</span>
+                                    </button>
+                                </form>
+                                <div id="formMessage" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
