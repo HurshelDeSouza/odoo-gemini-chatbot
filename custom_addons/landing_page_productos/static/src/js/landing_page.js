@@ -11,11 +11,26 @@
         console.log('Button exists:', $('#openFormBtn').length);
         console.log('Modal exists:', $('#orderModal').length);
         
-        // Abrir modal
+        // Abrir modal (sin cerrar al hacer clic fuera)
         $(document).on('click', '#openFormBtn', function(e) {
             e.preventDefault();
             console.log('Button clicked!');
-            $('#orderModal').modal('show');
+            
+            // Intentar con Bootstrap 5 primero
+            var modalEl = document.getElementById('orderModal');
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                var modal = new bootstrap.Modal(modalEl, {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                modal.show();
+            } else {
+                // Fallback a Bootstrap 4 / jQuery
+                $('#orderModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            }
         });
         
         // Selección de paquetes

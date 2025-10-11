@@ -67,7 +67,7 @@
                                     </div>
 
                                     <!-- Botón para abrir el formulario -->
-                                    <button type="button" class="btn btn-contraentrega btn-lg w-100 mb-4" id="openFormBtn">
+                                    <button type="button" class="btn btn-contraentrega btn-lg w-100 mb-4" onclick="openOrderModal()">
                                         <i class="fa fa-shopping-cart"></i> Pagar Contraentrega
                                         <br/>
                                         <small>Tu pedido llegará en 3 a 5 días hábiles</small>
@@ -114,12 +114,12 @@
                 </div>
 
                 <!-- Modal del formulario -->
-                <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">PAGO CONTRA REEMBOLSO</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" onclick="closeOrderModal()" aria-label="Close">
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
@@ -338,6 +338,76 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Script simple para abrir modal -->
+            <script type="text/javascript">
+                function openOrderModal() {
+                    console.log('Opening modal...');
+                    var $modal = $('#orderModal');
+                    
+                    // Intentar jQuery primero (Odoo usa jQuery)
+                    if (typeof $ !== 'undefined' &amp;&amp; $.fn.modal) {
+                        console.log('Using jQuery modal');
+                        
+                        // Remover atributos que pueden interferir
+                        $modal.removeAttr('aria-hidden');
+                        
+                        // Abrir el modal
+                        $modal.modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        
+                        // Forzar mostrar
+                        $modal.modal('show');
+                    }
+                    // Bootstrap 5
+                    else if (typeof bootstrap !== 'undefined' &amp;&amp; bootstrap.Modal) {
+                        console.log('Using Bootstrap 5');
+                        var modalEl = document.getElementById('orderModal');
+                        var modal = new bootstrap.Modal(modalEl, {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        modal.show();
+                    }
+                    // Fallback manual
+                    else {
+                        console.log('Using manual fallback');
+                        var modalEl = document.getElementById('orderModal');
+                        modalEl.classList.add('show');
+                        modalEl.style.display = 'block';
+                        modalEl.setAttribute('aria-modal', 'true');
+                        modalEl.removeAttribute('aria-hidden');
+                        document.body.classList.add('modal-open');
+                        
+                        var backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        backdrop.id = 'customBackdrop';
+                        document.body.appendChild(backdrop);
+                    }
+                }
+                
+                // Cerrar modal
+                function closeOrderModal() {
+                    var modalEl = document.getElementById('orderModal');
+                    
+                    if (typeof $ !== 'undefined' &amp;&amp; $.fn.modal) {
+                        $('#orderModal').modal('hide');
+                    } else if (typeof bootstrap !== 'undefined' &amp;&amp; bootstrap.Modal) {
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                    } else {
+                        modalEl.classList.remove('show');
+                        modalEl.style.display = 'none';
+                        modalEl.setAttribute('aria-hidden', 'true');
+                        modalEl.removeAttribute('aria-modal');
+                        document.body.classList.remove('modal-open');
+                        var backdrop = document.getElementById('customBackdrop');
+                        if (backdrop) backdrop.remove();
+                    }
+                }
+            </script>
         </t>
     </template>
 </odoo>
