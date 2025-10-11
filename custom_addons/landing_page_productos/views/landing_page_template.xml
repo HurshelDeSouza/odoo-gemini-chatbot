@@ -25,14 +25,23 @@
                                              class="img-fluid rounded shadow-lg"
                                              id="mainProductImage"/>
                                     </div>
-                                    <div class="offer-badge">
-                                        <h3>OFERTA ESPECIAL</h3>
-                                        <div class="price-options">
-                                            <p>1X $89,900</p>
-                                            <p>2X $119,900</p>
-                                            <p class="highlight">3X $159,900</p>
+                                    
+                                    <!-- Miniaturas -->
+                                    <div class="product-thumbnails mt-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <img src="/landing_page_productos/static/src/img/portada.avif" 
+                                                     alt="Imagen 1" 
+                                                     class="img-fluid thumbnail-img active"
+                                                     onclick="changeMainImage('/landing_page_productos/static/src/img/producto-placeholder.jpg', this)"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <img src="/landing_page_productos/static/src/img/Promo.avif" 
+                                                     alt="Imagen 2" 
+                                                     class="img-fluid thumbnail-img"
+                                                     onclick="changeMainImage('/landing_page_productos/static/src/img/Promo.webp', this)"/>
+                                            </div>
                                         </div>
-                                        <p class="small-text">Con envío GRATIS y<br/>Pago Contrareembolso</p>
                                     </div>
                                 </div>
                             </div>
@@ -341,6 +350,22 @@
             
             <!-- Script simple para abrir modal -->
             <script type="text/javascript">
+                // Cambiar imagen principal
+                function changeMainImage(imageSrc, clickedThumb) {
+                    document.getElementById('mainProductImage').src = imageSrc;
+                    
+                    // Actualizar clase active en miniaturas
+                    var thumbnails = document.querySelectorAll('.thumbnail-img');
+                    thumbnails.forEach(function(thumb) {
+                        thumb.classList.remove('active');
+                    });
+                    
+                    // Agregar active a la miniatura clickeada
+                    if (clickedThumb) {
+                        clickedThumb.classList.add('active');
+                    }
+                }
+                
                 function openOrderModal() {
                     console.log('Opening modal...');
                     var $modal = $('#orderModal');

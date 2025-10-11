@@ -21,7 +21,48 @@
 .main-image img {
     width: 100%;
     max-width: 500px;
-    border-radius: 15px;
+    border-radius: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Miniaturas */
+.product-thumbnails {
+    max-width: 500px;
+}
+
+.product-thumbnails .row {
+    margin: 0;
+}
+
+.product-thumbnails .col-6 {
+    padding: 0 2px;
+}
+
+.product-thumbnails .col-6:first-child {
+    padding-left: 0;
+}
+
+.product-thumbnails .col-6:last-child {
+    padding-right: 0;
+}
+
+.thumbnail-img {
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnail-img:hover {
+    border-color: #25D366;
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
+}
+
+.thumbnail-img.active {
+    border-color: #25D366;
+    box-shadow: 0 6px 15px rgba(37, 211, 102, 0.6);
 }
 
 .offer-badge {
