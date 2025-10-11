@@ -242,7 +242,24 @@
     }
 }
 
+@media (max-width: 576px) {
+    .col-form-label {
+        text-align: left !important;
+        padding-bottom: 5px;
+    }
+    
+    .modal-body {
+        padding: 20px 15px;
+    }
+}
+
 /* Modal del formulario */
+#orderModal .modal-dialog {
+    max-width: 620px;
+    width: 95%;
+    margin: 1.75rem auto;
+}
+
 .modal-content {
     border-radius: 15px;
     border: none;
@@ -258,6 +275,10 @@
 .modal-title {
     font-weight: bold;
     font-size: 20px;
+}
+
+.modal-body {
+    padding: 25px;
 }
 
 /* Opciones de paquetes */
@@ -339,6 +360,19 @@
 .priority-shipping label {
     margin-bottom: 0;
     cursor: pointer;
+    line-height: 1.5;
+}
+
+.priority-shipping .form-check-input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: 2px solid #666;
+}
+
+.priority-shipping .form-check-input:checked {
+    background-color: #25D366;
+    border-color: #25D366;
 }
 
 /* Campos del formulario en modal */
@@ -349,39 +383,64 @@
     font-size: 15px;
 }
 
+.col-form-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-right: 10px;
+}
+
 .modal-body .input-group-text {
     background: #e8e8e8;
-    border: 1px solid #d0d0d0;
+    border: 1px solid #d5d5d5;
     border-right: none;
-    color: #666;
+    color: #555;
+    border-radius: 8px 0 0 8px;
+    padding: 10px 12px;
 }
 
 .modal-body .form-control,
 .modal-body .form-select {
-    border: 1px solid #d0d0d0;
-    padding: 12px 15px;
+    border: 1px solid #d5d5d5;
+    padding: 10px 15px;
     font-size: 15px;
-    background: white;
+    background: #f9f9f9;
+    border-radius: 8px;
+    color: #666;
 }
 
 .modal-body .input-group .form-control {
     border-left: none;
+    border-radius: 0 8px 8px 0;
+    background: #f9f9f9;
+}
+
+.modal-body .form-control::placeholder {
+    color: #aaa;
+    font-weight: 400;
 }
 
 .modal-body .form-control:focus,
 .modal-body .form-select:focus {
-    border-color: #25D366;
-    box-shadow: 0 0 0 0.2rem rgba(37, 211, 102, 0.15);
+    border-color: #b0b0b0;
+    box-shadow: none;
     outline: none;
+    background: #fff;
 }
 
 .modal-body .input-group:focus-within .input-group-text {
-    border-color: #25D366;
+    border-color: #b0b0b0;
+    background: #e0e0e0;
 }
 
 .modal-body .form-select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 16px 12px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding-right: 2.5rem;
 }

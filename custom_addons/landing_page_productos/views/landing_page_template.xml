@@ -196,33 +196,40 @@
 
                                 <!-- Formulario -->
                                 <form id="leadForm">
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Teléfono <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                                            <input type="tel" class="form-control" name="phone" placeholder="Teléfono" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Teléfono <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                                <input type="tel" class="form-control" name="phone" placeholder="Teléfono" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Nombre <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                            <input type="text" class="form-control" name="name" placeholder="Nombre" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Nombre <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                <input type="text" class="form-control" name="name" placeholder="Nombre" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Apellido <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                            <input type="text" class="form-control" name="lastname" placeholder="Apellido" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Apellido <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                <input type="text" class="form-control" name="lastname" placeholder="Apellido" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Departamento <span class="text-danger">*</span></div>
-                                        <select class="form-control form-select" name="department" required="required">
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Departamento <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control form-select" name="department" required="required">
                                                 <option value="">Departamento</option>
                                                 <option value="Amazonas">Amazonas</option>
                                                 <option value="Antioquia">Antioquia</option>
@@ -257,53 +264,66 @@
                                                 <option value="Vaupés">Vaupés</option>
                                                 <option value="Vichada">Vichada</option>
                                             </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Ciudad <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
-                                            <input type="text" class="form-control" name="city" placeholder="Ciudad" required="required"/>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Dirección Exacta <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
-                                            <input type="text" class="form-control" name="address" placeholder="Eje: Calle 52c #13 sur -34" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Ciudad <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-map-marker"></i></span>
+                                                <input type="text" class="form-control" name="city" placeholder="Ciudad" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Barrio <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-list"></i></span>
-                                            <input type="text" class="form-control" name="neighborhood" placeholder="Nombre del barrio" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Dirección Exacta <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                                <input type="text" class="form-control" name="address" placeholder="Eje: Calle 52c #13 sur -34" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Confirme su teléfono <span class="text-danger">*</span></div>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-list"></i></span>
-                                            <input type="tel" class="form-control" name="phone_confirm" placeholder="Número celular" required="required"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Barrio <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-list"></i></span>
+                                                <input type="text" class="form-control" name="neighborhood" placeholder="Nombre del barrio" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <div class="form-field-label">Correo electrónico</div>
-                                        <div class="input-group">
-                                            <span class="input-group-text">@</span>
-                                            <input type="email" class="form-control" name="email" placeholder="Correo electrónico (Opcional)"/>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Confirme su teléfono <span class="text-danger">*</span></label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-list"></i></span>
+                                                <input type="tel" class="form-control" name="phone_confirm" placeholder="Número celular" required="required"/>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-check mb-4 priority-shipping">
-                                        <input class="form-check-input" type="checkbox" name="priority_shipping" id="priorityShipping"/>
-                                        <label class="form-check-label" for="priorityShipping">
-                                            Agregar <strong>ENVÍO PRIORITARIO</strong> por solo <strong>$5,000.00</strong> Su pedido se despachará más rápido que los otros y llegará más rápido.
-                                        </label>
+                                    <div class="row mb-3 align-items-center">
+                                        <label class="col-sm-4 col-form-label text-end">Correo electrónico</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text">@</span>
+                                                <input type="email" class="form-control" name="email" placeholder="Correo electrónico (Opcional)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="priority-shipping mb-4">
+                                        <div class="d-flex align-items-start">
+                                            <input class="form-check-input mt-1 me-3 flex-shrink-0" type="checkbox" name="priority_shipping" id="priorityShipping"/>
+                                            <label class="form-check-label" for="priorityShipping">
+                                                Agregar <strong>ENVÍO PRIORITARIO</strong> por solo <strong>$5,000.00</strong> Su pedido se despachará más rápido que los otros y llegará más rápido.
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <input type="hidden" name="product_interest" id="selectedPackage" value="Paquete 2"/>
