@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Agregar opción "Leads" al menú de CRM -->
+    <record id="crm_lead_menu_item" model="ir.ui.menu">
+        <field name="name">Leads</field>
+        <field name="parent_id" ref="crm.crm_menu_root"/>
+        <field name="action" ref="crm.crm_lead_all_leads"/>
+        <field name="sequence">5</field>
+    </record>
+    
+    <!-- Agregar opción "All Leads" como alternativa -->
+    <record id="crm_all_leads_menu" model="ir.ui.menu">
+        <field name="name">All Leads</field>
+        <field name="parent_id" ref="crm.crm_menu_root"/>
+        <field name="action" ref="crm.crm_lead_all_leads"/>
+        <field name="sequence">6</field>
+    </record>
+</odoo>

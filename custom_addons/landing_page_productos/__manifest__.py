@@ -13,6 +13,8 @@
     'license': 'LGPL-3',
     'depends': ['website', 'crm', 'product'],
     'data': [
+        'data/company_data.xml',
+        'views/crm_menu_views.xml',
         'views/landing_page_template.xml',
     ],
     'assets': {
