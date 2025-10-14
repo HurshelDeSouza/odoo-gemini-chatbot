@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Acceso a Leads - Odoo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #714B67;
+            text-align: center;
+        }
+        .btn {
+            display: block;
+            padding: 15px 30px;
+            margin: 10px 0;
+            background: #714B67;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #5a3a52;
+        }
+        .info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🎯 Acceso Rápido a Leads</h1>
+        
+        <div class="info">
+            <strong>📋 Nota:</strong> Haz clic en los botones de abajo para acceder directamente a los leads de cada compañía.
+        </div>
+        
+        <h2>🌎 Ver Leads por Compañía:</h2>
+        
+        <a href="http://localhost:8069/web#action=crm.crm_lead_all_leads&model=crm.lead&view_type=list" class="btn">
+            📊 Ver TODOS los Leads
+        </a>
+        
+        <a href="http://localhost:8069/web#action=crm.crm_lead_all_leads&model=crm.lead&view_type=list&cids=2" class="btn">
+            🇨🇴 Ver Leads de Colombia
+        </a>
+        
+        <a href="http://localhost:8069/web#action=crm.crm_lead_all_leads&model=crm.lead&view_type=list&cids=3" class="btn">
+            🇲🇽 Ver Leads de México
+        </a>
+        
+        <a href="http://localhost:8069/web#action=crm.crm_lead_all_leads&model=crm.lead&view_type=list&cids=4" class="btn">
+            🇺🇸 Ver Leads de USA
+        </a>
+        
+        <h2>🔧 Otras Opciones:</h2>
+        
+        <a href="http://localhost:8069/web#model=res.company&view_type=list" class="btn">
+            🏢 Ver Compañías
+        </a>
+        
+        <a href="http://localhost:8069/web#model=crm.team&view_type=list" class="btn">
+            👥 Ver Equipos de Ventas
+        </a>
+    </div>
+    
+    <div class="card">
+        <h2>💡 Tip: Agregar a Favoritos</h2>
+        <p>Una vez que accedas a los leads:</p>
+        <ol>
+            <li>Haz clic en la ⭐ (estrella) junto a "Leads"</li>
+            <li>Se agregará a tu menú de favoritos</li>
+            <li>Podrás acceder rápidamente desde el menú lateral</li>
+        </ol>
+    </div>
+</body>
+</html>
