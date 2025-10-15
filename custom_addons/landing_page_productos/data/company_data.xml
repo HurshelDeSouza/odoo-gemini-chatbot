@@ -29,6 +29,8 @@
             <field name="phone">+1 555 123 4567</field>
         </record>
         
+        <!-- Compañía Cuba - Creada manualmente, solo referencia -->
+        
         <!-- Equipos de Ventas por Compañía -->
         
         <!-- Equipo Colombia -->
@@ -75,6 +77,8 @@
             <field name="use_leads" eval="True"/>
             <field name="use_opportunities" eval="True"/>
         </record>
+        
+        <!-- Equipo Cuba - Creado manualmente, solo referencia -->
         
     </data>
 </odoo>

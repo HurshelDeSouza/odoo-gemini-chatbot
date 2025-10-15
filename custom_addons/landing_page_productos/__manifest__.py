@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Landing Page Productos',
-    'version': '1.0',
+    'version': '18.0.1.0.0',
     'category': 'Website',
     'summary': 'Landing page personalizada para captura de leads con productos',
     'description': """
@@ -11,8 +11,9 @@
     'author': 'Tu Empresa',
     'website': 'https://www.tuempresa.com',
     'license': 'LGPL-3',
-    'depends': ['website', 'crm', 'product'],
+    'depends': ['website', 'crm', 'product', 'sales_team'],
     'data': [
+        'data/technical_user_data.xml',
         'data/company_data.xml',
         'views/crm_menu_views.xml',
         'views/landing_page_template.xml',
