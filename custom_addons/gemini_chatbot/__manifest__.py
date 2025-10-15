@@ -20,6 +20,7 @@
     },
     'data': [
         'security/ir.model.access.csv',
+        'views/menu_views.xml',  # Primero: crear menú raíz
         'views/chatbot_config_views.xml',
         'views/chat_session_views.xml',
         'views/chat_message_views.xml',
@@ -29,7 +30,6 @@
         'views/product_landing_views.xml',
         'views/whatsapp_campaign_views.xml',
         'views/product_lead_views.xml',
-        'views/menu_views.xml',
         'data/chatbot_config_data.xml',
     ],
     'assets': {

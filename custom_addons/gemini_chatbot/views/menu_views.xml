@@ -1,43 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Main Menu -->
+    <!-- Main Menu Root - Solo el menú raíz sin acciones -->
     <menuitem id="menu_gemini_chatbot_root" 
               name="Gemini Chatbot" 
               sequence="10"
               web_icon="gemini_chatbot,static/description/icon.png"/>
 
-    <!-- Chat Sessions Menu -->
-    <menuitem id="menu_chat_sessions" 
-              name="Chat Sessions" 
-              parent="menu_gemini_chatbot_root" 
-              action="action_chat_session" 
-              sequence="20"/>
-
-    <!-- Chat Messages Menu -->
-    <menuitem id="menu_chat_messages" 
-              name="Messages" 
-              parent="menu_gemini_chatbot_root" 
-              action="action_chat_message" 
-              sequence="30"/>
-
-    <!-- Chatbot Landing Page Menu -->
-    <record id="action_chatbot_landing" model="ir.actions.act_url">
-        <field name="name">Open Chatbot</field>
-        <field name="url">/chatbot</field>
-        <field name="target">new</field>
-    </record>
-
-    <menuitem id="menu_chatbot_landing" 
-              name="Abrir Landing Page" 
-              parent="menu_gemini_chatbot_root" 
-              action="action_chatbot_landing" 
-              sequence="5"/>
-
-    <!-- File Uploads Menu -->
-    <menuitem id="menu_file_uploads" 
-              name="Subidas de Archivos" 
-              parent="menu_gemini_chatbot_root" 
-              action="action_file_upload" 
-              sequence="35"/>
 </odoo>
