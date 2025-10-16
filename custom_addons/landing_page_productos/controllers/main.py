@@ -24,20 +24,23 @@ class LandingPageController(http.Controller):
         # Remover ceros iniciales (ej: 053065305 → 53065305)
         clean_phone = clean_phone.lstrip('0')
         
-        # Detectar país por código telefónico usando XML IDs
+        # Mapeo de códigos telefónicos a países
+        country_map = {
+            '57': ('CO', 'Colombia'),
+            '53': ('CU', 'Cuba'),
+            '52': ('MX', 'México'),
+            '1': ('US', 'USA'),
+        }
+        
+        # Detectar país por código telefónico
         try:
-            if clean_phone.startswith('57'):  # Colombia
-                company = request.env.ref('landing_page_productos.company_colombia', raise_if_not_found=False)
-                return company or request.env.company
-            elif clean_phone.startswith('53'):  # Cuba
-                company = request.env.ref('landing_page_productos.company_cuba', raise_if_not_found=False)
-                return company or request.env.company
-            elif clean_phone.startswith('52'):  # México
-                company = request.env.ref('landing_page_productos.company_mexico', raise_if_not_found=False)
-                return company or request.env.company
-            elif clean_phone.startswith('1'):  # USA/Canadá
-                company = request.env.ref('landing_page_productos.company_usa', raise_if_not_found=False)
-                return company or request.env.company
+            for code, (country_code, country_name) in country_map.items():
+                if clean_phone.startswith(code):
+                    # Obtener o crear compañía dinámicamente
+                    company = request.env['crm.lead'].sudo().get_or_create_company_by_country(
+                        country_code, country_name
+                    )
+                    return company
         except Exception as e:
             _logger.warning('Error detecting company by phone: %s', e)
         
@@ -46,30 +49,23 @@ class LandingPageController(http.Controller):
     
     def _get_team_by_company(self, company):
         """Obtiene el equipo de ventas de la compañía"""
-        # Mapeo de compañías a equipos usando XML IDs
-        company_team_map = {
-            'landing_page_productos.company_colombia': 'landing_page_productos.sales_team_colombia_website',
-            'landing_page_productos.company_cuba': 'landing_page_productos.sales_team_cuba_website',
-            'landing_page_productos.company_mexico': 'landing_page_productos.sales_team_mexico_website',
-            'landing_page_productos.company_usa': 'landing_page_productos.sales_team_usa_website',
-        }
-        
         try:
-            # Buscar el XML ID de la compañía
-            for company_xmlid, team_xmlid in company_team_map.items():
-                company_ref = request.env.ref(company_xmlid, raise_if_not_found=False)
-                if company_ref and company_ref.id == company.id:
-                    team = request.env.ref(team_xmlid, raise_if_not_found=False)
-                    return team if team else False
+            # Buscar equipo de ventas de la compañía
+            team = request.env['crm.team'].sudo().search([
+                ('company_id', '=', company.id),
+                ('name', 'ilike', 'website')
+            ], limit=1)
+            
+            if not team:
+                # Si no hay equipo específico de website, buscar cualquier equipo
+                team = request.env['crm.team'].sudo().search([
+                    ('company_id', '=', company.id)
+                ], limit=1)
+            
+            return team if team else False
         except Exception as e:
             _logger.warning('Error getting team by company: %s', e)
-        
-        # Fallback: buscar cualquier equipo de la compañía
-        team = request.env['crm.team'].sudo().search([
-            ('company_id', '=', company.id)
-        ], limit=1)
-        
-        return team if team else False
+            return False
     
     @http.route('/landing/productos', type='http', auth='public', website=True)
     def landing_page(self, **kwargs):
