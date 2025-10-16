@@ -11,6 +11,17 @@ _logger = logging.getLogger(__name__)
 # Rate limiting simple (en memoria)
 _rate_limit_cache = {}
 
+# Constantes
+COUNTRY_PHONE_MAP = {
+    '57': ('CO', 'Colombia'),
+    '53': ('CU', 'Cuba'),
+    '52': ('MX', 'México'),
+    '1': ('US', 'USA'),
+}
+
+MAX_REQUESTS = 5
+TIME_WINDOW = 300  # 5 minutos
+
 class LandingPageController(http.Controller):
     
     def _get_company_by_phone(self, phone):
@@ -24,17 +35,9 @@ class LandingPageController(http.Controller):
         # Remover ceros iniciales (ej: 053065305 → 53065305)
         clean_phone = clean_phone.lstrip('0')
         
-        # Mapeo de códigos telefónicos a países
-        country_map = {
-            '57': ('CO', 'Colombia'),
-            '53': ('CU', 'Cuba'),
-            '52': ('MX', 'México'),
-            '1': ('US', 'USA'),
-        }
-        
         # Detectar país por código telefónico
         try:
-            for code, (country_code, country_name) in country_map.items():
+            for code, (country_code, country_name) in COUNTRY_PHONE_MAP.items():
                 if clean_phone.startswith(code):
                     # Obtener o crear compañía dinámicamente
                     company = request.env['crm.lead'].sudo().get_or_create_company_by_country(
@@ -83,7 +86,7 @@ class LandingPageController(http.Controller):
         except Exception:
             return False
     
-    def _check_rate_limit(self, ip_address, max_requests=5, time_window=300):
+    def _check_rate_limit(self, ip_address, max_requests=MAX_REQUESTS, time_window=TIME_WINDOW):
         """
         Rate limiting simple
         max_requests: máximo de solicitudes permitidas
@@ -106,7 +109,7 @@ class LandingPageController(http.Controller):
             
             if time_passed < time_window:
                 if data['count'] >= max_requests:
-                    return False, f'Demasiadas solicitudes. Intenta nuevamente en {int(time_window - time_passed)} segundos.'
+                    return False, 'Demasiadas solicitudes. Intenta nuevamente en %d segundos.' % int(time_window - time_passed)
                 data['count'] += 1
             else:
                 # Reiniciar contador
@@ -126,6 +129,56 @@ class LandingPageController(http.Controller):
         # Escapar HTML
         return Markup.escape(text)
     
+    def _validate_form_data(self, post):
+        """Valida y sanitiza los datos del formulario"""
+        name = self._sanitize_input(post.get('name', '').strip(), 100)
+        email = post.get('email', '').strip().lower()
+        phone = post.get('phone', '').strip()
+        product_interest = self._sanitize_input(post.get('product_interest', '').strip(), 200)
+        message = self._sanitize_input(post.get('message', '').strip(), 1000)
+        
+        # Validación de campos requeridos
+        if not name or not email or not phone:
+            return False, 'Por favor completa todos los campos requeridos.'
+        
+        # Validación de email
+        if not self._validate_email(email):
+            return False, 'Por favor ingresa un email válido.'
+        
+        # Validación de teléfono (mínimo 7 dígitos)
+        phone_digits = ''.join(filter(str.isdigit, phone))
+        if len(phone_digits) < 7:
+            return False, 'Por favor ingresa un teléfono válido.'
+        
+        return True, {
+            'name': name,
+            'email': email,
+            'phone': phone,
+            'product_interest': product_interest,
+            'message': message,
+        }
+    
+    def _prepare_lead_values(self, data, company, team, source):
+        """Prepara los valores para crear el lead"""
+        lead_vals = {
+            'name': 'Lead - %s' % data['name'],
+            'contact_name': data['name'],
+            'email_from': data['email'],
+            'phone': data['phone'],
+            'description': 'Producto de interés: %s\n\nMensaje: %s' % (
+                data['product_interest'], data['message']
+            ),
+            'company_id': company.id,
+            'team_id': team.id if team else False,
+            'user_id': False,
+            'type': 'lead',
+        }
+        
+        if source:
+            lead_vals['source_id'] = source.id
+        
+        return lead_vals
+    
     @http.route('/landing/submit', type='json', auth='public', methods=['POST'], csrf=False)
     def submit_lead(self, **post):
         """Recibe el formulario y crea un lead en el CRM"""
@@ -137,71 +190,26 @@ class LandingPageController(http.Controller):
                 _logger.warning('Rate limit exceeded for IP: %s', ip_address)
                 return {'success': False, 'message': rate_message}
             
-            # Validar y sanitizar datos requeridos
-            name = self._sanitize_input(post.get('name', '').strip(), 100)
-            email = post.get('email', '').strip().lower()
-            phone = post.get('phone', '').strip()
-            product_interest = self._sanitize_input(post.get('product_interest', '').strip(), 200)
-            message = self._sanitize_input(post.get('message', '').strip(), 1000)
+            # Validar datos del formulario
+            is_valid, result = self._validate_form_data(post)
+            if not is_valid:
+                return {'success': False, 'message': result}
             
-            # Validación de campos requeridos
-            if not name or not email or not phone:
-                return {
-                    'success': False,
-                    'message': 'Por favor completa todos los campos requeridos.'
-                }
-            
-            # Validación de email
-            if not self._validate_email(email):
-                return {
-                    'success': False,
-                    'message': 'Por favor ingresa un email válido.'
-                }
-            
-            # Validación de teléfono (mínimo 7 dígitos)
-            phone_digits = ''.join(filter(str.isdigit, phone))
-            if len(phone_digits) < 7:
-                return {
-                    'success': False,
-                    'message': 'Por favor ingresa un teléfono válido.'
-                }
+            data = result
             
             # Detectar compañía por código de país del teléfono
-            company = self._get_company_by_phone(phone)
+            company = self._get_company_by_phone(data['phone'])
             team = self._get_team_by_company(company)
             
             # Obtener source_id si existe
             source = request.env.ref('utm.utm_source_website', raise_if_not_found=False)
             
-            # Obtener usuario técnico
-            try:
-                technical_user = request.env.ref('landing_page_productos.user_landing_page_technical', raise_if_not_found=False)
-            except Exception:
-                technical_user = None
-            
             # Preparar valores del lead
-            lead_vals = {
-                'name': f'Lead - {name}',
-                'contact_name': name,
-                'email_from': email,
-                'phone': phone,
-                'description': f'Producto de interés: {product_interest}\n\nMensaje: {message}',
-                'company_id': company.id,
-                'team_id': team.id if team else False,
-                'user_id': False,  # Sin asignar vendedor inicialmente
-                'type': 'lead',  # Forzar tipo "lead" en lugar de "opportunity"
-            }
+            lead_vals = self._prepare_lead_values(data, company, team, source)
             
-            if source:
-                lead_vals['source_id'] = source.id
-            
-            # Crear lead usando usuario técnico o sudo
-            if technical_user:
-                lead = request.env['crm.lead'].with_user(technical_user).with_context(tracking_disable=True).create(lead_vals)
-                _logger.info('Lead created with technical user: %s (ID: %s)', lead.name, lead.id)
-            else:
-                lead = request.env['crm.lead'].with_context(tracking_disable=True).sudo().create(lead_vals)
-                _logger.info('Lead created with sudo: %s (ID: %s)', lead.name, lead.id)
+            # Crear lead con sudo
+            lead = request.env['crm.lead'].with_context(tracking_disable=True).sudo().create(lead_vals)
+            _logger.info('Lead created: %s (ID: %s)', lead.name, lead.id)
             
             return {
                 'success': True,

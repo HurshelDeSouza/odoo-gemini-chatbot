@@ -29,7 +29,7 @@ class CrmLead(models.Model):
             # Buscar el país
             country = Country.search([('code', '=', country_code.upper())], limit=1)
             if not country:
-                _logger.warning(f'Country {country_code} not found')
+                _logger.warning('Country %s not found', country_code)
                 return self.env.company
             
             # Obtener la moneda del país
@@ -42,11 +42,11 @@ class CrmLead(models.Model):
                 'currency_id': currency.id,
             })
             
-            _logger.info(f'Created company: {country_name} (ID: {company.id})')
+            _logger.info('Created company: %s (ID: %s)', country_name, company.id)
             
             # Crear equipo de ventas para esta compañía
             self.env['crm.team'].create({
-                'name': f'Website {country_name}',
+                'name': 'Website %s' % country_name,
                 'company_id': company.id,
                 'use_leads': True,
                 'use_opportunities': True,
@@ -55,5 +55,5 @@ class CrmLead(models.Model):
             return company
             
         except Exception as e:
-            _logger.error(f'Error creating company for {country_name}: {e}')
+            _logger.error('Error creating company for %s: %s', country_name, e)
             return self.env.company
