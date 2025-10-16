@@ -158,10 +158,68 @@ class LandingPageController(http.Controller):
             'message': message,
         }
     
-    def _prepare_lead_values(self, data, company, team, source):
+    def _parse_message_data(self, message):
+        """Extrae datos estructurados del mensaje del formulario"""
+        data = {}
+        lines = message.split('\n')
+        for line in lines:
+            if ':' in line:
+                key, value = line.split(':', 1)
+                key = key.strip().lower().replace(' ', '_')
+                data[key] = value.strip()
+        return data
+    
+    def _create_or_update_partner(self, data, company, message):
+        """Crea o actualiza un contacto (res.partner) con los datos del formulario"""
+        Partner = request.env['res.partner'].sudo()
+        
+        # Buscar si ya existe un contacto con este email
+        partner = Partner.search([
+            ('email', '=', data['email'])
+        ], limit=1)
+        
+        # Extraer datos adicionales del mensaje
+        message_data = self._parse_message_data(message)
+        
+        # Preparar dirección completa
+        street_parts = []
+        if message_data.get('dirección'):
+            street_parts.append(message_data['dirección'])
+        if message_data.get('barrio'):
+            street_parts.append('Barrio: %s' % message_data['barrio'])
+        
+        street = ', '.join(street_parts) if street_parts else False
+        
+        # Valores del partner
+        partner_vals = {
+            'name': data['name'],
+            'email': data['email'],
+            'phone': data['phone'],
+            'mobile': message_data.get('teléfono_confirmación', data['phone']),
+            'company_id': company.id,
+            'street': street,
+            'city': message_data.get('ciudad', False),
+            'state_id': False,  # Se podría mapear el departamento
+            'country_id': company.country_id.id if company.country_id else False,
+            'comment': 'Registrado desde Landing Page\nProducto de interés: %s' % data.get('product_interest', ''),
+        }
+        
+        if partner:
+            # Actualizar contacto existente
+            partner.write(partner_vals)
+            _logger.info('Partner updated: %s (ID: %s)', partner.name, partner.id)
+        else:
+            # Crear nuevo contacto
+            partner = Partner.create(partner_vals)
+            _logger.info('Partner created: %s (ID: %s)', partner.name, partner.id)
+        
+        return partner
+    
+    def _prepare_lead_values(self, data, company, team, source, partner):
         """Prepara los valores para crear el lead"""
         lead_vals = {
             'name': 'Lead - %s' % data['name'],
+            'partner_id': partner.id,  # Vincular con el contacto
             'contact_name': data['name'],
             'email_from': data['email'],
             'phone': data['phone'],
@@ -204,12 +262,15 @@ class LandingPageController(http.Controller):
             # Obtener source_id si existe
             source = request.env.ref('utm.utm_source_website', raise_if_not_found=False)
             
+            # Crear o actualizar contacto (res.partner)
+            partner = self._create_or_update_partner(data, company, data['message'])
+            
             # Preparar valores del lead
-            lead_vals = self._prepare_lead_values(data, company, team, source)
+            lead_vals = self._prepare_lead_values(data, company, team, source, partner)
             
             # Crear lead con sudo
             lead = request.env['crm.lead'].with_context(tracking_disable=True).sudo().create(lead_vals)
-            _logger.info('Lead created: %s (ID: %s)', lead.name, lead.id)
+            _logger.info('Lead created: %s (ID: %s) linked to Partner (ID: %s)', lead.name, lead.id, partner.id)
             
             return {
                 'success': True,
