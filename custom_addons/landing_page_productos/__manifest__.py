@@ -14,6 +14,8 @@
     'depends': ['website', 'crm', 'product', 'sales_team', 'utm'],
     'data': [
         'security/ir.model.access.csv',
+        'data/product_data.xml',
+        'views/crm_lead_views.xml',
         'views/landing_page_template.xml',
     ],
     'assets': {

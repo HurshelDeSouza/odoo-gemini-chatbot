@@ -215,8 +215,42 @@ class LandingPageController(http.Controller):
         
         return partner
     
+    def _get_product_by_package(self, product_interest):
+        """Obtiene el producto según el paquete seleccionado"""
+        Product = request.env['product.template'].sudo()
+        
+        # Mapeo de paquetes a XML IDs de productos
+        package_map = {
+            'Paquete 1': 'landing_page_productos.product_paquete_1',
+            'Paquete 2': 'landing_page_productos.product_paquete_2',
+            'Paquete 3': 'landing_page_productos.product_paquete_3',
+        }
+        
+        # Buscar el producto por XML ID
+        for package_name, xml_id in package_map.items():
+            if package_name in product_interest:
+                try:
+                    product = request.env.ref(xml_id, raise_if_not_found=False)
+                    if product:
+                        return product
+                except Exception as e:
+                    _logger.warning('Error getting product %s: %s', xml_id, e)
+        
+        # Si no se encuentra, buscar por nombre
+        if 'Paquete' in product_interest:
+            product = Product.search([
+                ('name', 'ilike', product_interest)
+            ], limit=1)
+            if product:
+                return product
+        
+        return False
+    
     def _prepare_lead_values(self, data, company, team, source, partner):
         """Prepara los valores para crear el lead"""
+        # Obtener el producto seleccionado
+        product = self._get_product_by_package(data['product_interest'])
+        
         lead_vals = {
             'name': 'Lead - %s' % data['name'],
             'partner_id': partner.id,  # Vincular con el contacto
@@ -231,6 +265,15 @@ class LandingPageController(http.Controller):
             'user_id': False,
             'type': 'lead',
         }
+        
+        # Agregar producto si se encontró
+        if product:
+            lead_vals['landing_product_id'] = product.id
+            lead_vals['description'] = 'Producto seleccionado: %s (Precio: $%s)\n\n%s' % (
+                product.name,
+                '{:,.2f}'.format(product.list_price),
+                lead_vals['description']
+            )
         
         if source:
             lead_vals['source_id'] = source.id

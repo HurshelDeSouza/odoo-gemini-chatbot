@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
-from odoo import models, api
+from odoo import models, fields, api
 import logging
 
 _logger = logging.getLogger(__name__)
 
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
+    
+    # Campo para vincular el producto de interés
+    landing_product_id = fields.Many2one(
+        'product.template',
+        string='Producto de Interés (Landing Page)',
+        help='Producto seleccionado en el formulario de la landing page'
+    )
     
     @api.model
     def get_or_create_company_by_country(self, country_code, country_name):

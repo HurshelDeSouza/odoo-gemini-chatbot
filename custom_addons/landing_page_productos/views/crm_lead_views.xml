@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Agregar campo de producto al formulario de Lead -->
+    <record id="crm_lead_view_form_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.landing.product</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Agregar el campo después del campo de teléfono -->
+            <xpath expr="//field[@name='phone']" position="after">
+                <field name="landing_product_id" 
+                       string="Producto de Interés"
+                       options="{'no_create': True, 'no_open': True}"
+                       invisible="landing_product_id == False"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

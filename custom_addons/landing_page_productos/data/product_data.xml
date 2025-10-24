@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Categoría de productos para Landing Page -->
+        <record id="product_category_landing" model="product.category">
+            <field name="name">Landing Page Productos</field>
+        </record>
+        
+        <!-- Paquete 1: 1 unidad + 1 Lubricante GRATIS -->
+        <record id="product_paquete_1" model="product.template">
+            <field name="name">Paquete 1 - 1 unidad + 1 Lubricante GRATIS</field>
+            <field name="categ_id" ref="product_category_landing"/>
+            <field name="list_price">89900.00</field>
+            <field name="standard_price">45000.00</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="description">Compra 1 unidad de nuestro producto premium y recibe 1 Lubricante completamente GRATIS. Ideal para probar nuestro producto.</field>
+            <field name="description_sale">✅ 1 Unidad del producto
+✅ 1 Lubricante GRATIS
+✅ Envío GRATIS
+✅ Pago contraentrega</field>
+        </record>
+        
+        <!-- Paquete 2: 2 unidades con 35% descuento + 3 Lubricantes GRATIS -->
+        <record id="product_paquete_2" model="product.template">
+            <field name="name">Paquete 2 - 2 unidades con 35% descuento + 3 Lubricantes GRATIS</field>
+            <field name="categ_id" ref="product_category_landing"/>
+            <field name="list_price">119900.00</field>
+            <field name="standard_price">60000.00</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="description">¡OFERTA ESPECIAL! Compra 2 unidades con un 35% de descuento y recibe 3 Lubricantes completamente GRATIS. El paquete más popular.</field>
+            <field name="description_sale">✅ 2 Unidades del producto
+✅ 35% de descuento
+✅ 3 Lubricantes GRATIS
+✅ Envío GRATIS
+✅ Pago contraentrega
+⭐ PAQUETE MÁS VENDIDO</field>
+        </record>
+        
+        <!-- Paquete 3: 3 unidades con 45% descuento + 6 Lubricantes GRATIS -->
+        <record id="product_paquete_3" model="product.template">
+            <field name="name">Paquete 3 - 3 unidades con 45% descuento + 6 Lubricantes GRATIS</field>
+            <field name="categ_id" ref="product_category_landing"/>
+            <field name="list_price">159900.00</field>
+            <field name="standard_price">80000.00</field>
+            <field name="type">consu</field>
+            <field name="sale_ok" eval="True"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="description">¡MÁXIMO AHORRO! Compra 3 unidades con un 45% de descuento y recibe 6 Lubricantes completamente GRATIS. La mejor oferta para compartir o tener stock.</field>
+            <field name="description_sale">✅ 3 Unidades del producto
+✅ 45% de descuento
+✅ 6 Lubricantes GRATIS
+✅ Envío GRATIS
+✅ Pago contraentrega
+🔥 MEJOR OFERTA - MÁXIMO AHORRO</field>
+        </record>
+        
+    </data>
+</odoo>
