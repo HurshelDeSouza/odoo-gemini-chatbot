@@ -4,6 +4,11 @@
     
     console.log('Landing page JS file loaded');
     
+    // Variable para guardar el total base sin envío prioritario
+    var baseTotal = 119900; // Paquete 2 por defecto
+    var priorityShippingCost = 5000;
+    var priorityShippingActive = false;
+    
     // Función para inicializar
     function init() {
         console.log('Initializing landing page');
@@ -48,27 +53,33 @@
             };
             
             var price = prices[packageNum];
+            baseTotal = price.total; // Guardar el total base
+            
+            // Calcular total con envío prioritario si está activo
+            var finalTotal = baseTotal;
+            if (priorityShippingActive) {
+                finalTotal += priorityShippingCost;
+            }
+            
             $('#subtotal').text('$' + price.subtotal.toLocaleString('es-CO') + '.00');
             $('#discount').text('-$' + price.discount.toLocaleString('es-CO') + '.00');
-            $('#total').text('$' + price.total.toLocaleString('es-CO') + '.00');
-            $('#btnTotal').text('$' + price.total.toLocaleString('es-CO') + '.00');
+            $('#total').text('$' + finalTotal.toLocaleString('es-CO') + '.00');
+            $('#btnTotal').text('$' + finalTotal.toLocaleString('es-CO') + '.00');
             $('#selectedPackage').val('Paquete ' + packageNum);
         });
         
         // Envío prioritario
         $(document).on('change', 'input[name="priority_shipping"]', function() {
-            var isChecked = $(this).is(':checked');
-            var currentTotal = parseInt($('#total').text().replace(/[^0-9]/g, ''));
-            var priorityCost = 5000;
+            priorityShippingActive = $(this).is(':checked');
             
-            if (isChecked) {
-                currentTotal += priorityCost;
-            } else {
-                currentTotal -= priorityCost;
+            // Calcular total: base + envío prioritario si está activo
+            var finalTotal = baseTotal;
+            if (priorityShippingActive) {
+                finalTotal += priorityShippingCost;
             }
             
-            $('#total').text('$' + currentTotal.toLocaleString('es-CO') + '.00');
-            $('#btnTotal').text('$' + currentTotal.toLocaleString('es-CO') + '.00');
+            $('#total').text('$' + finalTotal.toLocaleString('es-CO') + '.00');
+            $('#btnTotal').text('$' + finalTotal.toLocaleString('es-CO') + '.00');
         });
         
         // Envío del formulario
